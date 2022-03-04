@@ -21,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include = "..\P4\P4.csproj" />
+    <ProjectReference Include = "..\Cardinals\Cardinals.csproj" />
+    <ProjectReference Include = "..\Prestamo\Prestamo.csproj" />
   </ItemGroup>
 
 </Project>
