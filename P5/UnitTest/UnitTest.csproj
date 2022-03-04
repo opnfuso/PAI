@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include = "../CalculatorLib/CalculatorLib.csproj" />
+    <ProjectReference Include = "..\P4\P4.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,11 @@ namespace P3
   {
     public static void Main(string[] args)
     {
+      prestamo();
+    }
+
+    static void prestamo()
+    {
       int rate = 15;
 
       try
