@@ -19,15 +19,15 @@ namespace P4
       {
         WriteLine($"{num}st");
       }
-      else if (num % 10 == 2)
+      else if (num % 10 == 2 && num != 12)
       {
         WriteLine($"{num}nd");
       }
-      else if (num % 10 == 3)
+      else if (num % 10 == 3 && num != 13)
       {
         WriteLine($"{num}rd");
       }
-      else if (num == 11)
+      else if (num == 11 || num == 12 || num == 13)
       {
         WriteLine($"{num}th");
       }
