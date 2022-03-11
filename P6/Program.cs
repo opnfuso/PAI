@@ -7,28 +7,35 @@ namespace P6
   {
     static void Main(string[] args)
     {
-      string str = "alasalas";
+      Write("Ingresa una palabra : ");
+      string? str = ReadLine();
       string[] res = palindromes(str);
+      WriteLine();
+      WriteLine("Palindromas : ");
       WriteLine(String.Join(" ", res));
     }
 
     static string[] palindromes(string str)
     {
       int len = str.Length;
-      for (int i = 2; i < len; i++)
+      string[] astr = { };
+      List<string> astrList = new List<string>();
+      for (int i = 2; i <= len; i++)
       {
-        for (int j = 0; j <= len; j++)
+        for (int j = 0; j <= len - i; j++)
         {
           string sub = "";
           for (int x = j; x < j + i; x++)
           {
-            // sub += str[j];
+            sub += str[x];
           }
-          // WriteLine(sub);
+          if (isPalindrome(sub) && !astrList.Contains(sub))
+          {
+            astrList.Add(sub);
+          }
         }
       }
-
-      string[] astr = { str };
+      astr = astrList.ToArray();
       return astr;
     }
 
