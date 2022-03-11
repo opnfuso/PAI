@@ -19,6 +19,12 @@ namespace P6
       int len = str.Length;
       string[] astr = { };
       List<string> astrList = new List<string>();
+      if (len == 1)
+      {
+        astrList.Add(str);
+        astr = astrList.ToArray();
+        return astr;
+      }
       for (int i = 2; i <= len; i++)
       {
         for (int j = 0; j <= len - i; j++)
