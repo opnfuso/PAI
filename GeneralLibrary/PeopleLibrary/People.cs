@@ -3,7 +3,7 @@
 //public, private, protected
 //private protected, protected protected, public protected
 using System.Collections; //List<T>, Tuple<>, Dictionary<>
-public class Person
+public class Person : IComparable<Person>
 {
   // field, member
   // private string FirstName;
@@ -23,4 +23,12 @@ public class Person
     return ("Apple", 5);
   }
 
+  public int CompareTo(Person? other)
+  {
+    if (other is null)
+    {
+      return 0;
+    }
+    return FirstName.CompareTo(other.FirstName);
+  }
 }
