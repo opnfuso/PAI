@@ -22,7 +22,6 @@ namespace Examen
       }
       ares.Add(res * -1);
       int[] respuesta = ares.ToArray();
-      WriteLine(res);
       return respuesta;
     }
   }
