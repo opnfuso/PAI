@@ -16,6 +16,8 @@ namespace P7
       Gerente gerente = new Gerente(num_gerente);
       gerente.setMasterPassword(masterPass);
       gerentes.Add(gerente);
+
+      WriteLine("El gerente se ha creado satisfactoriamente");
     }
   }
 }

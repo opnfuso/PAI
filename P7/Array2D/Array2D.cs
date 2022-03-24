@@ -8,11 +8,10 @@ public class Array2D<T> : IEnumerable
     _array = arr;
   }
 
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    // call the generic version of the method
-    return this.GetEnumerator();
-  }
+  // IEnumerator IEnumerable.GetEnumerator()
+  // { 
+  //   return this.GetEnumerator();
+  // }
 
   public IEnumerator GetEnumerator()
   {
@@ -29,5 +28,4 @@ public class Array2D<T> : IEnumerable
   {
     return _array[x, y];
   }
-
 }

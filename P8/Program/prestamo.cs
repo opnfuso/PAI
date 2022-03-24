@@ -22,6 +22,8 @@ namespace P7
       WriteLine();
       Prestamo prestamo = new Prestamo(num_cuenta, int_interes, monto_prestamo, plazo_prestamo);
       prestamos.Add(prestamo);
+
+      WriteLine("El prestamo se ha generado satisfactoriamente");
     }
   }
 }

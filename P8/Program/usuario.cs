@@ -23,6 +23,8 @@ namespace P7
       Usuario user = new Usuario(num_cuenta, nombre, apellido, fecha_nacimiento);
       user.setNip(uint.Parse(nip));
       usuarios.Add(user);
+
+      WriteLine("El usuario se ha creado satisfactoriamente");
     }
   }
 }
