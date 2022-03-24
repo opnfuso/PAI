@@ -18,4 +18,12 @@ public class Usuario
     else
     { return false; }
   }
+
+  public Usuario(uint num_cuenta, string nombres, string apellidos, DateOnly fecha_nacimiento)
+  {
+    this.num_cuenta = num_cuenta;
+    this.nombres = nombres;
+    this.apellidos = apellidos;
+    this.fecha_nacimiento = fecha_nacimiento;
+  }
 }
