@@ -58,67 +58,83 @@ namespace P7
 
     static void mis_prestamos(uint num_cuenta)
     {
-      IEnumerable<Prestamo> prestamos = Program.prestamos.Where(prestamo => prestamo.num_cuenta == num_cuenta);
-      if (prestamos.LongCount() == 0)
+      try
       {
-        WriteLine("No tienes prestamos");
-        return;
-      }
+        IEnumerable<Prestamo> prestamos = Program.prestamos.Where(prestamo => prestamo.num_cuenta == num_cuenta);
+        if (prestamos.LongCount() == 0)
+        {
+          WriteLine("No tienes prestamos");
+          return;
+        }
 
-      WriteLine("\nMonto\t\tPlazo\tInteres\tFecha de creacion");
-      foreach (Prestamo prestamo in prestamos)
+        WriteLine("\nMonto\t\tPlazo\tInteres\tFecha de creacion");
+        foreach (Prestamo prestamo in prestamos)
+        {
+          WriteLine($"{prestamo.monto}\t\t{prestamo.tiempo}\t{prestamo.interes}\t{prestamo.fecha_prestamo}");
+        }
+      }
+      catch (System.Exception error)
       {
-        WriteLine($"{prestamo.monto}\t\t{prestamo.tiempo}\t{prestamo.interes}\t{prestamo.fecha_prestamo}");
+        WriteLine(error.Message);
+        return;
       }
     }
 
     static bool validar_prestamos(uint plazo)
     {
-      if (plazo == 6 || plazo == 12)
+      try
       {
-        Write("Ingresa numero de empleado : ");
-        string? res = ReadLine();
-        uint num_empleado = uint.Parse(res);
-        IEnumerable<Empleado> workers = empleados.Where(empleado => empleado.num_empleado == num_empleado);
-
-        if (workers.LongCount() == 0)
+        if (plazo == 6 || plazo == 12)
         {
-          WriteLine("No existe el empleado");
+          Write("Ingresa numero de empleado : ");
+          string? res = ReadLine();
+          uint num_empleado = uint.Parse(res);
+          IEnumerable<Empleado> workers = empleados.Where(empleado => empleado.num_empleado == num_empleado);
+
+          if (workers.LongCount() == 0)
+          {
+            WriteLine("No existe el empleado");
+            return false;
+          }
+
+          WriteLine("Aprovado");
+          return true;
+        }
+        else if (plazo == 24 || plazo == 36)
+        {
+          Write("Ingresa numero de empleado del gerente : ");
+          string? res = ReadLine();
+          uint num_empleado = uint.Parse(res);
+          IEnumerable<Gerente> managers = gerentes.Where(gerente => gerente.num_empleado == num_empleado);
+
+          if (managers.LongCount() == 0)
+          {
+            WriteLine("No existe el gerente");
+            return false;
+          }
+
+          Write("Ingresa la contraseña maestra");
+          res = ReadLine();
+
+          bool pass = managers.ElementAt(0).validateMasterPassword(res);
+
+          if (!pass)
+          {
+            WriteLine("La contraseña maestra es incorrecta");
+            return false;
+          }
+
+          WriteLine("Aprovado");
+          return true;
+        }
+        else
+        {
           return false;
         }
-
-        WriteLine("Aprovado");
-        return true;
       }
-      else if (plazo == 24 || plazo == 36)
+      catch (System.Exception error)
       {
-        Write("Ingresa numero de empleado del gerente : ");
-        string? res = ReadLine();
-        uint num_empleado = uint.Parse(res);
-        IEnumerable<Gerente> managers = gerentes.Where(gerente => gerente.num_empleado == num_empleado);
-
-        if (managers.LongCount() == 0)
-        {
-          WriteLine("No existe el gerente");
-          return false;
-        }
-
-        Write("Ingresa la contraseña maestra");
-        res = ReadLine();
-
-        bool pass = managers.ElementAt(0).validateMasterPassword(res);
-
-        if (!pass)
-        {
-          WriteLine("La contraseña maestra es incorrecta");
-          return false;
-        }
-
-        WriteLine("Aprovado");
-        return true;
-      }
-      else
-      {
+        WriteLine(error.Message);
         return false;
       }
     }
