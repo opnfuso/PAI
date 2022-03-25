@@ -17,6 +17,12 @@ namespace P7
         return;
       }
 
+      IEnumerable<Gerente> gerentes_lista = Program.gerentes.Where(gerenteq => gerenteq.num_empleado == num_gerente);
+      if (gerentes_lista.LongCount() != 0)
+      {
+        throw new Exception("Ese numero de gerente ya existe");
+      }
+
       Write("Ingresa la contraseña maestra : ");
       string? masterPass = ReadLine();
       WriteLine();

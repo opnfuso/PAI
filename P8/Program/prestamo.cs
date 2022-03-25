@@ -6,43 +6,54 @@ namespace P7
   {
     static void crear_prestamo(uint num_cuenta)
     {
-      Write("Ingresa el monto : ");
-      string? monto = ReadLine();
-      float monto_prestamo = float.Parse(monto);
-      Write("Ingresa el plazo (6, 12, 24, 36 meses) : ");
-      string? plazo = ReadLine();
-      uint plazo_prestamo = uint.Parse(plazo);
-      if (plazo_prestamo != 6 && plazo_prestamo != 12 && plazo_prestamo != 24 && plazo_prestamo != 36)
+      try
       {
-        WriteLine("No se puede pagar en ese tiempo");
+        Write("Ingresa el monto : ");
+        string? monto = ReadLine();
+        float monto_prestamo = float.Parse(monto);
+
+        if (monto_prestamo <= 0)
+        {
+          throw new Exception("No se puede prestar un monto menor o igual a 0");
+        }
+
+        Write("Ingresa el plazo (6, 12, 24, 36 meses) : ");
+        string? plazo = ReadLine();
+        uint plazo_prestamo = uint.Parse(plazo);
+        if (plazo_prestamo != 6 && plazo_prestamo != 12 && plazo_prestamo != 24 && plazo_prestamo != 36)
+        {
+          throw new Exception("No se puede pagar en ese tiempo");
+        }
+
+        bool approved = validar_prestamos(plazo_prestamo);
+
+        if (!approved)
+        {
+          throw new Exception("El prestamo no pudo ser aprobado");
+        }
+
+        WriteLine("El interes es de 15%");
+        uint int_interes = 15;
+        WriteLine();
+
+        float monto_total = monto_prestamo + (monto_prestamo * (int_interes / 100f));
+
+        float por_mes = monto_total / plazo_prestamo;
+        DateTime fecha = DateTime.Now;
+        WriteLine($"El pago mensual es de {por_mes}");
+        WriteLine($"La fecha del primer pago es {fecha.AddMonths(1):D}");
+
+        Prestamo prestamo = new Prestamo(num_cuenta, int_interes, monto_prestamo, plazo_prestamo);
+        prestamos.Add(prestamo);
+
+        WriteLine("El prestamo se ha generado satisfactoriamente");
+      }
+      catch (System.Exception error)
+      {
+        WriteLine(error.Message);
         return;
       }
 
-      bool approved = validar_prestamos(plazo_prestamo);
-
-      if (!approved)
-      {
-        WriteLine("El prestamo no pudo ser aprobado");
-        return;
-      }
-
-      WriteLine("El interes es de 15%");
-      uint int_interes = 15;
-      WriteLine();
-
-      float monto_total = monto_prestamo + (monto_prestamo * (int_interes / 100f));
-
-      float por_mes = monto_total / plazo_prestamo;
-      DateTime fecha = DateTime.Now;
-      WriteLine($"El pago mensual es de {por_mes}");
-      WriteLine($"La fecha del primer pago es {fecha.AddMonths(1):D}");
-
-
-      Prestamo prestamo = new Prestamo(num_cuenta, int_interes, monto_prestamo, plazo_prestamo);
-      prestamos.Add(prestamo);
-
-
-      WriteLine("El prestamo se ha generado satisfactoriamente");
     }
 
     static void mis_prestamos(uint num_cuenta)

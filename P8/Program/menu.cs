@@ -9,135 +9,148 @@ namespace P7
       bool end = false;
       do
       {
-        WriteLine();
-        WriteLine("1. Usuario");
-        WriteLine("2. Empleado");
-        WriteLine("3. Gerente");
-        WriteLine("4. Salir");
-        Write("Opcion : ");
-        string? res = ReadLine();
-        Int16 ans = Int16.Parse(res);
-
-        switch (ans)
+        try
         {
-          case 1:
-            {
-              Write("\nIngresa tu numero de cuenta : ");
-              res = ReadLine();
-              uint ncuenta = uint.Parse(res);
-              IEnumerable<Usuario> users = usuarios.Where(usuario => usuario.num_cuenta == ncuenta);
-              if (users.LongCount() == 0)
-              {
-                WriteLine("No existe ese numero de cuenta");
-                return;
-              }
+          WriteLine();
+          WriteLine("1. Usuario");
+          WriteLine("2. Empleado");
+          WriteLine("3. Gerente");
+          WriteLine("4. Salir");
+          Write("Opcion : ");
+          string? res = ReadLine();
+          Int16 ans = Int16.Parse(res);
 
-              Write("Ingresa tu NIP : ");
-              res = ReadLine();
-              uint nip = uint.Parse(res);
-              if (users.ElementAt(0).validateNip(nip))
+          if (ans <= 0)
+          {
+            throw new Exception("No se pueden numeros negativos");
+          }
+
+          switch (ans)
+          {
+            case 1:
               {
-                WriteLine("1. Pedir un prestamo");
-                WriteLine("2. Ver tus prestamos");
+                Write("\nIngresa tu numero de cuenta : ");
+                res = ReadLine();
+                uint ncuenta = uint.Parse(res);
+                IEnumerable<Usuario> users = usuarios.Where(usuario => usuario.num_cuenta == ncuenta);
+                if (users.LongCount() == 0)
+                {
+                  WriteLine("No existe ese numero de cuenta");
+                  return;
+                }
+
+                Write("Ingresa tu NIP : ");
+                res = ReadLine();
+                uint nip = uint.Parse(res);
+                if (users.ElementAt(0).validateNip(nip))
+                {
+                  WriteLine("1. Pedir un prestamo");
+                  WriteLine("2. Ver tus prestamos");
+                  Write("Opcion : ");
+                  res = ReadLine();
+
+                  switch (int.Parse(res))
+                  {
+                    case 1:
+                      crear_prestamo(ncuenta);
+                      break;
+                    case 2:
+                      mis_prestamos(ncuenta);
+                      break;
+                    default:
+                      break;
+                  }
+
+                }
+                else
+                {
+                  WriteLine("El nip es incorrecto");
+                }
+              }
+              break;
+
+            case 2:
+              {
+                Write("\nIngresa tu numero de cuenta : ");
+                res = ReadLine();
+                uint nempleado = uint.Parse(res);
+                IEnumerable<Empleado> workers = empleados.Where(empleado => empleado.num_empleado == nempleado);
+                if (workers.LongCount() == 0)
+                {
+                  WriteLine("No existe ese numero de empleado");
+                  return;
+                }
+
+                WriteLine("1. Crear un usuario");
+                WriteLine("2. Crear un empleado");
                 Write("Opcion : ");
                 res = ReadLine();
 
                 switch (int.Parse(res))
                 {
                   case 1:
-                    crear_prestamo(ncuenta);
+                    crear_usuario();
                     break;
                   case 2:
-                    mis_prestamos(ncuenta);
+                    crear_empleado();
                     break;
                   default:
                     break;
                 }
 
+
               }
-              else
+              break;
+
+            case 3:
               {
-                WriteLine("El nip es incorrecto");
-              }
-            }
-            break;
+                Write("\nIngresa tu numero de cuenta : ");
+                res = ReadLine();
+                uint ngerente = uint.Parse(res);
+                IEnumerable<Gerente> managers = gerentes.Where(gerente => gerente.num_empleado == ngerente);
+                if (managers.LongCount() == 0)
+                {
+                  WriteLine("No existe ese numero de gerente");
+                  return;
+                }
 
-          case 2:
-            {
-              Write("\nIngresa tu numero de cuenta : ");
-              res = ReadLine();
-              uint nempleado = uint.Parse(res);
-              IEnumerable<Empleado> workers = empleados.Where(empleado => empleado.num_empleado == nempleado);
-              if (workers.LongCount() == 0)
+                WriteLine("1. Crear un usuario");
+                WriteLine("2. Crear un empleado");
+                WriteLine("3. Crear un gerente");
+                Write("Opcion : ");
+                res = ReadLine();
+
+                switch (int.Parse(res))
+                {
+                  case 1:
+                    crear_usuario();
+                    break;
+                  case 2:
+                    crear_empleado();
+                    break;
+                  case 3:
+                    crear_gerente();
+                    break;
+                  default:
+                    break;
+                }
+              }
+              break;
+
+            case 4:
               {
-                WriteLine("No existe ese numero de empleado");
-                return;
+                end = true;
               }
-
-              WriteLine("1. Crear un usuario");
-              WriteLine("2. Crear un empleado");
-              Write("Opcion : ");
-              res = ReadLine();
-
-              switch (int.Parse(res))
-              {
-                case 1:
-                  crear_usuario();
-                  break;
-                case 2:
-                  crear_empleado();
-                  break;
-                default:
-                  break;
-              }
-
-
-            }
-            break;
-
-          case 3:
-            {
-              Write("\nIngresa tu numero de cuenta : ");
-              res = ReadLine();
-              uint ngerente = uint.Parse(res);
-              IEnumerable<Gerente> managers = gerentes.Where(gerente => gerente.num_empleado == ngerente);
-              if (managers.LongCount() == 0)
-              {
-                WriteLine("No existe ese numero de gerente");
-                return;
-              }
-
-              WriteLine("1. Crear un usuario");
-              WriteLine("2. Crear un empleado");
-              WriteLine("3. Crear un gerente");
-              Write("Opcion : ");
-              res = ReadLine();
-
-              switch (int.Parse(res))
-              {
-                case 1:
-                  crear_usuario();
-                  break;
-                case 2:
-                  crear_empleado();
-                  break;
-                case 3:
-                  crear_gerente();
-                  break;
-                default:
-                  break;
-              }
-            }
-            break;
-
-          case 4:
-            {
-              end = true;
-            }
-            break;
-          default:
-            break;
+              break;
+            default:
+              break;
+          }
         }
+        catch (System.Exception error)
+        {
+          WriteLine(error.Message);
+        }
+
       } while (end == false);
 
 
