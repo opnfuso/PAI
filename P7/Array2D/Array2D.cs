@@ -8,11 +8,6 @@ public class Array2D<T> : IEnumerable
     _array = arr;
   }
 
-  // IEnumerator IEnumerable.GetEnumerator()
-  // { 
-  //   return this.GetEnumerator();
-  // }
-
   public IEnumerator GetEnumerator()
   {
     for (int i = 0; i < _array.GetLength(0); i++)

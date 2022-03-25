@@ -6,7 +6,6 @@ namespace P7
   {
     static void crear_empleado()
     {
-      WriteLine();
       Write("\nIngresa el numero de empleado : ");
       string? nempleado = ReadLine();
       uint num_empleado = uint.Parse(nempleado);

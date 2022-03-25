@@ -6,10 +6,17 @@ namespace P7
   {
     static void crear_gerente()
     {
-      WriteLine();
       Write("\nIngresa el numero de gerente : ");
       string? ngerente = ReadLine();
       uint num_gerente = uint.Parse(ngerente);
+
+      IEnumerable<Empleado> empleados = Program.empleados.Where(empleado => empleado.num_empleado == num_gerente);
+      if (empleados.LongCount() != 0)
+      {
+        WriteLine("Ese numero de empleado ya existe");
+        return;
+      }
+
       Write("Ingresa la contraseña maestra : ");
       string? masterPass = ReadLine();
       WriteLine();

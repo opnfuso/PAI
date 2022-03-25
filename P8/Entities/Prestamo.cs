@@ -3,7 +3,9 @@ public class Prestamo
   public uint interes;
   public float monto;
   public uint tiempo;
-  private uint num_cuenta;
+  public uint num_cuenta;
+
+  public DateTime fecha_prestamo;
 
   public Prestamo(uint num_cuenta, uint interes, float monto, uint tiempo)
   {
@@ -11,6 +13,7 @@ public class Prestamo
     this.interes = interes;
     this.monto = monto;
     this.tiempo = tiempo;
+    this.fecha_prestamo = DateTime.Now;
   }
 
 }

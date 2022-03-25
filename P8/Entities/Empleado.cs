@@ -12,4 +12,7 @@ public class Empleado
     this.apellidos = apellidos;
     this.fecha_nacimiento = fecha_nacimiento;
   }
+
+  public interface IEmpleado
+  { }
 }

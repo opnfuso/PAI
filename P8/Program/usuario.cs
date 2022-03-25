@@ -6,7 +6,6 @@ namespace P7
   {
     static void crear_usuario()
     {
-      WriteLine();
       Write("\nIngresa el numero de cuenta : ");
       string? ncuenta = ReadLine();
       uint num_cuenta = uint.Parse(ncuenta);

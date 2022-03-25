@@ -20,4 +20,7 @@ public class Gerente
   {
     this.num_empleado = num_empleado;
   }
+
+  public interface IGerente
+  { }
 }
