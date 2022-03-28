@@ -1,3 +1,6 @@
+using static System.IO.Directory;
+using static System.IO.Path;
+using static System.Environment;
 public class Prestamo
 {
   public uint interes;
@@ -14,6 +17,25 @@ public class Prestamo
     this.monto = monto;
     this.tiempo = tiempo;
     this.fecha_prestamo = DateTime.Now;
+
+    saveToFile();
+  }
+
+  public void saveToFile()
+  {
+    string dir = Combine(CurrentDirectory, "Entities", "TextFiles");
+    CreateDirectory(dir);
+
+    string textFile = Combine(dir, "Prestamos.txt");
+
+    if (File.Exists(textFile))
+    {
+      File.AppendAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
+    }
+    else
+    {
+      File.WriteAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
+    }
   }
 
 }

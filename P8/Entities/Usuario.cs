@@ -1,3 +1,6 @@
+using static System.IO.Directory;
+using static System.IO.Path;
+using static System.Environment;
 public class Usuario
 {
   public uint num_cuenta;
@@ -9,6 +12,8 @@ public class Usuario
   public void setNip(uint nip)
   {
     this.nip = nip;
+
+    saveToFile();
   }
 
   public bool validateNip(uint nip)
@@ -25,5 +30,22 @@ public class Usuario
     this.nombres = nombres;
     this.apellidos = apellidos;
     this.fecha_nacimiento = fecha_nacimiento;
+  }
+
+  public void saveToFile()
+  {
+    string dir = Combine(CurrentDirectory, "Entities", "TextFiles");
+    CreateDirectory(dir);
+
+    string textFile = Combine(dir, "Usuarios.txt");
+
+    if (File.Exists(textFile))
+    {
+      File.AppendAllText(textFile, $"{num_cuenta},{nombres},{apellidos},{fecha_nacimiento},{nip}\n");
+    }
+    else
+    {
+      File.WriteAllText(textFile, $"{num_cuenta},{nombres},{apellidos},{fecha_nacimiento},{nip}\n");
+    }
   }
 }

@@ -18,7 +18,7 @@ namespace CH08
       // WorkWithDrives();
       // WorkWithDirectories();
       // WorkWithFiles();
-      WorkWithXml();
+      // WorkWithXml();
     }
 
     static void OutputFileSystemInfo()
