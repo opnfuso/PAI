@@ -97,7 +97,7 @@ namespace P7
             return false;
           }
 
-          WriteLine("Aprovado");
+          WriteLine("Aprobado");
           return true;
         }
         else if (plazo == 24 || plazo == 36)
