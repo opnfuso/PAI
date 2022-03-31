@@ -26,11 +26,12 @@ namespace P7
         string? fecha = ReadLine();
         Write("Ingresa el nip : ");
         string? nip = ReadLine();
+        uint nip_user = uint.Parse(nip);
         WriteLine();
         DateOnly fecha_nacimiento = DateOnly.Parse(fecha);
-        Usuario user = new Usuario(num_cuenta, nombre, apellido, fecha_nacimiento);
-        user.setNip(uint.Parse(nip));
+        Usuario user = new Usuario(num_cuenta, nombre, apellido, fecha_nacimiento, nip_user);
         usuarios.Add(user);
+        UsuarioJsonSerialization(usuarios);
 
         WriteLine("El usuario se ha creado satisfactoriamente");
       }

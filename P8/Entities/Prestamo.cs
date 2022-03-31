@@ -18,24 +18,24 @@ public class Prestamo
     this.tiempo = tiempo;
     this.fecha_prestamo = DateTime.Now;
 
-    saveToFile();
+    // saveToFile();
   }
 
-  public void saveToFile()
-  {
-    string dir = Combine(CurrentDirectory, "Entities", "TextFiles");
-    CreateDirectory(dir);
+  // public void saveToFile()
+  // {
+  //   string dir = Combine(CurrentDirectory, "Entities", "TextFiles");
+  //   CreateDirectory(dir);
 
-    string textFile = Combine(dir, "Prestamos.txt");
+  //   string textFile = Combine(dir, "Prestamos.txt");
 
-    if (File.Exists(textFile))
-    {
-      File.AppendAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
-    }
-    else
-    {
-      File.WriteAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
-    }
-  }
+  //   if (File.Exists(textFile))
+  //   {
+  //     File.AppendAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
+  //   }
+  //   else
+  //   {
+  //     File.WriteAllText(textFile, $"{num_cuenta},{interes},{monto},{tiempo},{fecha_prestamo}\n");
+  //   }
+  // }
 
 }

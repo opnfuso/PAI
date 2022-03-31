@@ -27,9 +27,9 @@ namespace P7
         Write("Ingresa la contraseña maestra : ");
         string? masterPass = ReadLine();
         WriteLine();
-        Gerente gerente = new Gerente(num_gerente);
-        gerente.setMasterPassword(masterPass);
+        Gerente gerente = new Gerente(num_gerente, masterPass);
         gerentes.Add(gerente);
+        GerenteJsonSerialization(gerentes);
 
         WriteLine("El gerente se ha creado satisfactoriamente");
       }

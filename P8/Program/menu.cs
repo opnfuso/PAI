@@ -42,7 +42,7 @@ namespace P7
                 Write("Ingresa tu NIP : ");
                 res = ReadLine();
                 uint nip = uint.Parse(res);
-                if (users.ElementAt(0).validateNip(nip))
+                if (users.ElementAt(0).nip == nip)
                 {
                   WriteLine("1. Pedir un prestamo");
                   WriteLine("2. Ver tus prestamos");

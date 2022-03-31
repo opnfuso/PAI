@@ -116,7 +116,7 @@ namespace P7
           Write("Ingresa la contraseña maestra");
           res = ReadLine();
 
-          bool pass = managers.ElementAt(0).validateMasterPassword(res);
+          bool pass = managers.ElementAt(0).master_pass == res;
 
           if (!pass)
           {
