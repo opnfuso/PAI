@@ -25,10 +25,11 @@ namespace P7
         Write("Ingresa el fecha de nacimiento : ");
         string? fecha = ReadLine();
         WriteLine();
-        DateOnly fecha_nacimiento = DateOnly.Parse(fecha);
+        DateTime fecha_nacimiento = DateTime.Parse(fecha);
         Empleado worker = new Empleado(num_empleado, nombre, apellido, fecha_nacimiento);
         empleados.Add(worker);
         EmpleadoJsonSerialization(empleados);
+        EmpleadoXmlSerialization(empleados);
 
         WriteLine("El empleado se ha creado satisfactoriamente");
       }

@@ -1,11 +1,21 @@
+using System.Xml.Serialization;
 public class Empleado
 {
+  [XmlElement("num_empleado")]
   public uint num_empleado;
+  [XmlElement("nombres")]
   public string nombres;
+  [XmlElement("apellidos")]
   public string apellidos;
-  public DateOnly fecha_nacimiento;
+  [XmlElement("fecha_nacimiento")]
+  public DateTime fecha_nacimiento;
 
-  public Empleado(uint num_empleado, string nombres, string apellidos, DateOnly fecha_nacimiento)
+  public Empleado()
+  {
+
+  }
+
+  public Empleado(uint num_empleado, string nombres, string apellidos, DateTime fecha_nacimiento)
   {
     this.num_empleado = num_empleado;
     this.nombres = nombres;

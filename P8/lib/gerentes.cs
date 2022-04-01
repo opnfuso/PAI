@@ -41,5 +41,18 @@ namespace P7
         gerentes = new List<Gerente>();
       }
     }
+
+    private static void GerenteXmlSerialization(List<Gerente> gerentes)
+    {
+      string dir = Combine(CurrentDirectory, "Entities", "XmlFiles");
+      CreateDirectory(dir);
+
+      string xmlPath = Combine(dir, "gerentes.xml");
+      using (StreamWriter xmlStream = File.CreateText(xmlPath))
+      {
+        XmlSerializer xs = new XmlSerializer(typeof(List<Gerente>));
+        xs.Serialize(xmlStream, gerentes);
+      }
+    }
   }
 }

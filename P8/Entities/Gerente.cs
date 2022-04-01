@@ -1,10 +1,15 @@
-using static System.IO.Directory;
-using static System.IO.Path;
-using static System.Environment;
+using System.Xml.Serialization;
 public class Gerente
 {
+  [XmlElement("num_empleado")]
   public uint num_empleado;
+  [XmlElement("nombres")]
   public string master_pass;
+
+  public Gerente()
+  {
+
+  }
 
   public Gerente(uint num_empleado, string master_pass)
   {

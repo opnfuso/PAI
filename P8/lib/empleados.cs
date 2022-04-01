@@ -41,5 +41,18 @@ namespace P7
         empleados = new List<Empleado>();
       }
     }
+
+    private static void EmpleadoXmlSerialization(List<Empleado> empleados)
+    {
+      string dir = Combine(CurrentDirectory, "Entities", "XmlFiles");
+      CreateDirectory(dir);
+
+      string xmlPath = Combine(dir, "empleados.xml");
+      using (StreamWriter xmlStream = File.CreateText(xmlPath))
+      {
+        XmlSerializer xss = new XmlSerializer(typeof(List<Empleado>));
+        xss.Serialize(xmlStream, empleados);
+      }
+    }
   }
 }

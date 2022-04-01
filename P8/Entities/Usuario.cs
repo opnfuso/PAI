@@ -1,15 +1,22 @@
-using static System.IO.Directory;
-using static System.IO.Path;
-using static System.Environment;
+using System.Xml.Serialization;
 public class Usuario
 {
+  [XmlElement("num_cuenta")]
   public uint num_cuenta;
+  [XmlElement("nombres")]
   public string nombres;
+  [XmlElement("apellidos")]
   public string apellidos;
-  public DateOnly fecha_nacimiento;
+  [XmlElement("fecha_nacimiento")]
+  public DateTime fecha_nacimiento;
+  [XmlElement("num_empleado")]
   public uint nip;
 
-  public Usuario(uint num_cuenta, string nombres, string apellidos, DateOnly fecha_nacimiento, uint nip)
+  public Usuario()
+  {
+
+  }
+  public Usuario(uint num_cuenta, string nombres, string apellidos, DateTime fecha_nacimiento, uint nip)
   {
     this.num_cuenta = num_cuenta;
     this.nombres = nombres;

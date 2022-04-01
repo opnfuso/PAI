@@ -30,6 +30,7 @@ namespace P7
         Gerente gerente = new Gerente(num_gerente, masterPass);
         gerentes.Add(gerente);
         GerenteJsonSerialization(gerentes);
+        GerenteXmlSerialization(gerentes);
 
         WriteLine("El gerente se ha creado satisfactoriamente");
       }

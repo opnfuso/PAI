@@ -42,5 +42,18 @@ namespace P7
       }
 
     }
+
+    private static void UsuarioXmlSerialization(List<Usuario> usuarios)
+    {
+      string dir = Combine(CurrentDirectory, "Entities", "XmlFiles");
+      CreateDirectory(dir);
+
+      string xmlPath = Combine(dir, "usuarios.xml");
+      using (StreamWriter xmlStream = File.CreateText(xmlPath))
+      {
+        XmlSerializer xss = new XmlSerializer(typeof(List<Usuario>));
+        xss.Serialize(xmlStream, usuarios);
+      }
+    }
   }
 }

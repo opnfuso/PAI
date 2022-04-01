@@ -1,14 +1,21 @@
-using static System.IO.Directory;
-using static System.IO.Path;
-using static System.Environment;
+using System.Xml.Serialization;
 public class Prestamo
 {
+  [XmlElement("interes")]
   public uint interes;
+  [XmlElement("monto")]
   public float monto;
+  [XmlElement("tiempo")]
   public uint tiempo;
+  [XmlElement("num_cuenta")]
   public uint num_cuenta;
-
+  [XmlElement("fecha_prestamo")]
   public DateTime fecha_prestamo;
+
+  public Prestamo()
+  {
+
+  }
 
   public Prestamo(uint num_cuenta, uint interes, float monto, uint tiempo)
   {

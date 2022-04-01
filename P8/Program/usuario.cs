@@ -28,10 +28,11 @@ namespace P7
         string? nip = ReadLine();
         uint nip_user = uint.Parse(nip);
         WriteLine();
-        DateOnly fecha_nacimiento = DateOnly.Parse(fecha);
+        DateTime fecha_nacimiento = DateTime.Parse(fecha);
         Usuario user = new Usuario(num_cuenta, nombre, apellido, fecha_nacimiento, nip_user);
         usuarios.Add(user);
         UsuarioJsonSerialization(usuarios);
+        UsuarioXmlSerialization(usuarios);
 
         WriteLine("El usuario se ha creado satisfactoriamente");
       }

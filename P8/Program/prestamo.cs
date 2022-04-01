@@ -45,6 +45,8 @@ namespace P7
 
         Prestamo prestamo = new Prestamo(num_cuenta, int_interes, monto_prestamo, plazo_prestamo);
         prestamos.Add(prestamo);
+        PrestamoJsonSerialization(prestamos);
+        PrestamoXmlSerialization(prestamos);
 
         WriteLine("El prestamo se ha generado satisfactoriamente");
       }

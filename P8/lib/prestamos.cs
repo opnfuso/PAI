@@ -41,5 +41,18 @@ namespace P7
         prestamos = new List<Prestamo>();
       }
     }
+
+    private static void PrestamoXmlSerialization(List<Prestamo> prestamos)
+    {
+      string dir = Combine(CurrentDirectory, "Entities", "XmlFiles");
+      CreateDirectory(dir);
+
+      string xmlPath = Combine(dir, "prestamos.xml");
+      using (StreamWriter xmlStream = File.CreateText(xmlPath))
+      {
+        XmlSerializer xss = new XmlSerializer(typeof(List<Prestamo>));
+        xss.Serialize(xmlStream, prestamos);
+      }
+    }
   }
 }
