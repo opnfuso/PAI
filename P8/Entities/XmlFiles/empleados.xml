@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><ArrayOfEmpleado xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Empleado><num_empleado>2</num_empleado><nombres>Pedro</nombres><apellidos>Perez</apellidos><fecha_nacimiento>2000-01-01T00:00:00</fecha_nacimiento></Empleado></ArrayOfEmpleado>

@@ -114,6 +114,16 @@ namespace P7
                   return;
                 }
 
+
+                Write("Ingresa la password maestra : ");
+                res = ReadLine();
+
+                if (managers.ElementAt(0).master_pass != res)
+                {
+                  WriteLine("Password incorrecta");
+                  return;
+                }
+
                 WriteLine("1. Crear un usuario");
                 WriteLine("2. Crear un empleado");
                 WriteLine("3. Crear un gerente");

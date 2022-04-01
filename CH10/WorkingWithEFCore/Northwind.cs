@@ -15,7 +15,6 @@ namespace WorkingWithEFCore
         // connection string
         optionsBuilder.UseSqlite($"FileName= {path}");
         //string connection = "Data Source= + "Initial Catalog= Northwind;" + "Integrated Security= true;"
-        .
       }
     }
   }
