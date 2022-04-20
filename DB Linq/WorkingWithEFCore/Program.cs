@@ -13,11 +13,11 @@ namespace WorkingWithEFCore
             // QueryingProducts();
             // QueryingWithLike();
             // try adding a new product
-            if(AddProducts(categoryId: 6, productName: "La pizza de don Cangrejo", price: 500M,))
-            {
-                WriteLine("Add Product succesful");
-            }
-            ListProducts();
+            // if(AddProducts(categoryId: 6, productName: "La pizza de don Cangrejo", price: 500M,))
+            // {
+            //     WriteLine("Add Product succesful");
+            // }
+            // ListProducts();
         }
         static void QueryingCategories()
         {

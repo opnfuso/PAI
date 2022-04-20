@@ -32,8 +32,8 @@ namespace P7
           throw new Exception("El prestamo no pudo ser aprobado");
         }
 
-        WriteLine("El interes es de 15%");
-        uint int_interes = 15;
+        WriteLine("El interes es de 12%");
+        uint int_interes = 12;
         WriteLine();
 
         float monto_total = monto_prestamo + (monto_prestamo * (int_interes / 100f));

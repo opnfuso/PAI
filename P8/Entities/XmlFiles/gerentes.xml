@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?><ArrayOfGerente xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Gerente><num_empleado>3</num_empleado><nombres>password</nombres></Gerente></ArrayOfGerente>
+<?xml version="1.0" encoding="utf-8"?><ArrayOfGerente xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Gerente><num_empleado>3</num_empleado><nombres>password</nombres></Gerente><Gerente><num_empleado>10</num_empleado><nombres>pass</nombres></Gerente></ArrayOfGerente>
