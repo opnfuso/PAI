@@ -7,7 +7,7 @@ namespace P9.AutoModel
   {
     public int Id { get; set; }
     public int PersonaId { get; set; }
-    public int? UsuarioId { get; set; }
+    public long? UsuarioId { get; set; }
     public int? GerenteId { get; set; }
     public int Estatus { get; set; }
 

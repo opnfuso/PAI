@@ -32,7 +32,7 @@ namespace P9
               // pedirPrestamo(usuario);
               break;
             case "2":
-              // verHistorial(usuario);
+              verHistorial(usuario);
               break;
             case "3":
               verPrestamoActivo(usuario);
@@ -87,5 +87,65 @@ namespace P9
         Read();
       }
     }
+
+    public static void verHistorial(AutoModel.Usuario usuario)
+    {
+      try
+      {
+        using (var db = new AutoModel.bancoContext())
+        {
+          var Prestamo = new AutoModel.Usuario();
+          var prestamo = usuario.verHistorial(usuario.Id);
+
+          if (prestamo is Exception)
+          {
+            throw (Exception)prestamo;
+          }
+
+          if (prestamo is List<AutoModel.Pago>)
+          {
+            WriteLine("\nHistorial de pagos");
+            int i = 1;
+            int j = 1;
+            int id = 0;
+            foreach (var pago in (List<AutoModel.Pago>)prestamo)
+            {
+              var presta = db.Prestamos.Where(p => p.Id == pago.PrestamoId).FirstOrDefault();
+
+              if (presta == null)
+              {
+                throw new Exception("Error al obtener el prestamo");
+              }
+
+              WriteLine($"Folio Prestamo: {pago.PrestamoId} .- Cantidad: {pago.Cantidad}$ Numero de pago: ({j} de {presta.Meses}) Fecha de solicitud: {presta.FechaSolicitud} Fecha de liquidacion: {presta.FechaLiquidacion}");
+              if (i == 1)
+              {
+                id = pago.PrestamoId;
+                j++;
+              }
+              else if (id == pago.PrestamoId)
+              {
+                j++;
+              }
+              else
+              {
+                j = 1;
+                id = pago.PrestamoId;
+              }
+
+              i++;
+
+            }
+          }
+        }
+      }
+      catch (System.Exception ex)
+      {
+        WriteLine("\nError: " + ex.Message);
+        Write("Presione una tecla para continuar...");
+        Read();
+      }
+    }
+
   }
 }

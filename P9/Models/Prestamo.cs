@@ -12,7 +12,7 @@ namespace P9.AutoModel
     }
 
     public int Id { get; set; }
-    public int UsuarioId { get; set; }
+    public long UsuarioId { get; set; }
     public int? EmpleadoId { get; set; }
     public int? GerenteId { get; set; }
     public int Meses { get; set; }
@@ -20,9 +20,11 @@ namespace P9.AutoModel
     public decimal Interes { get; set; }
     public decimal PagoMes { get; set; }
     public DateOnly FechaSolicitud { get; set; }
-    public DateOnly? FechaAprobacion { get; set; }
-    public DateOnly? FechaLiquidacion { get; set; }
+    public DateOnly? FechaAprobacion { get; set; } = null!;
+    public DateOnly? FechaLiquidacion { get; set; } = null!;
     public bool Activo { get; set; }
+
+    public DateOnly? FechaPausa { get; set; } = null!;
 
     public virtual Empleado? Empleado { get; set; }
     public virtual Gerente? Gerente { get; set; }

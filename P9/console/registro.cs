@@ -7,6 +7,7 @@ namespace P9
   {
     public static void register()
     {
+      var persona = new AutoModel.Persona();
       WriteLine("\n\tBanco de Préstamos");
       WriteLine("Ingrese su primer nombre: ");
       string? primerNombre = ReadLine();
@@ -25,16 +26,17 @@ namespace P9
       {
         throw new Exception("Falta de datos");
       }
-    }
 
-    public static bool curp(string curp, string primerNombre, string primerApellido, string segundoApellido, DateOnly fechaNacimiento)
-    {
-      if (curp.Length != 18)
+      DateOnly FechaNacimiento = DateOnly.Parse(fechaNacimiento);
+
+      var newPersona = persona.Create(primerNombre, segundoNombre, primerApellido, segundoApellido, FechaNacimiento, curp);
+
+      if (newPersona is Exception)
       {
-        return false;
+        throw new Exception("Error al crear la persona");
       }
 
-      return true;
+      WriteLine("Persona creada con exito");
     }
   }
 }

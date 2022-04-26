@@ -227,6 +227,10 @@ namespace P9.AutoModel
 
         entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
 
+        entity.Property(e => e.FechaPausa)
+                  .HasColumnType("DATE")
+                  .HasColumnName("fecha_pausa");
+
         entity.HasOne(d => d.Empleado)
                   .WithMany(p => p.Prestamos)
                   .HasForeignKey(d => d.EmpleadoId);

@@ -14,7 +14,7 @@ namespace P9.AutoModel
       Solicituds = new HashSet<Solicitud>();
     }
 
-    public int Id { get; set; }
+    public long Id { get; set; }
     public int PersonaId { get; set; }
     public string NombreUsuario { get; set; } = null!;
     public string Password { get; set; } = null!;
@@ -84,6 +84,21 @@ namespace P9.AutoModel
         }
 
         return prestamo;
+      }
+    }
+
+    public object verHistorial(long id)
+    {
+      using (var db = new bancoContext())
+      {
+        var pagos = db.Pagos.Where(p => p.UsuarioId == id).ToList();
+
+        if (pagos.Count == 0)
+        {
+          return new Exception("No tiene pagos");
+        }
+
+        return pagos;
       }
     }
   }

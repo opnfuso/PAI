@@ -6,7 +6,7 @@ namespace P9.AutoModel
   public partial class Pago
   {
     public int Id { get; set; }
-    public int UsuarioId { get; set; }
+    public long UsuarioId { get; set; }
     public int PrestamoId { get; set; }
     public decimal Cantidad { get; set; }
     public DateOnly Fecha { get; set; }
