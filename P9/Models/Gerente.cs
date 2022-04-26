@@ -20,7 +20,11 @@ namespace P9.AutoModel
     public DateOnly FechaIncorporacion { get; set; }
     public DateOnly UltimasVacaciones { get; set; }
     public string Password { get; set; } = null!;
+    public int? DiasVaca { get; set; }
+    public int? DiasSeguidos { get; set; }
+    public decimal Saldo { get; set; }
 
+    public virtual ICollection<Cuenta> Cuenta { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 

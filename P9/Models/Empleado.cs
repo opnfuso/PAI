@@ -21,6 +21,8 @@ namespace P9.AutoModel
 
     public virtual ICollection<Prestamo> Prestamos { get; set; }
 
+    public virtual ICollection<Cuenta> Cuenta { get; set; }
+
     public object login(int user, string pass)
     {
       using (var db = new bancoContext())

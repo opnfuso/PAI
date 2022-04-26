@@ -23,7 +23,10 @@ namespace P9.AutoModel
     public int Intentos { get; set; }
     public DateTime? TiempoBloqueo { get; set; }
 
+    public DateOnly? FechaBaja { get; set; }
+
     public virtual Persona Persona { get; set; } = null!;
+    public virtual ICollection<Cuenta> Cuenta { get; set; }
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }

@@ -16,6 +16,7 @@ namespace P9.AutoModel
     {
     }
 
+    public virtual DbSet<Cuenta> Cuentas { get; set; } = null!;
     public virtual DbSet<Empleado> Empleados { get; set; } = null!;
     public virtual DbSet<Gerente> Gerentes { get; set; } = null!;
     public virtual DbSet<Pago> Pagos { get; set; } = null!;
@@ -36,6 +37,38 @@ namespace P9.AutoModel
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+      modelBuilder.Entity<Cuenta>(entity =>
+      {
+        entity.ToTable("cuentas");
+
+        entity.HasIndex(e => e.Id, "IX_cuentas_id")
+                  .IsUnique();
+
+        entity.Property(e => e.Id).HasColumnName("id");
+
+        entity.Property(e => e.NCuentaEmpleado).HasColumnName("n_cuenta_empleado");
+
+        entity.Property(e => e.NCuentaGerente).HasColumnName("n_cuenta_gerente");
+
+        entity.Property(e => e.NCuentaUsuario).HasColumnName("n_cuenta_usuario");
+
+        entity.Property(e => e.Tipo)
+                  .HasColumnType("INT (1)")
+                  .HasColumnName("tipo");
+
+        entity.HasOne(d => d.NCuentaEmpleadoNavigation)
+                  .WithMany(p => p.Cuenta)
+                  .HasForeignKey(d => d.NCuentaEmpleado);
+
+        entity.HasOne(d => d.NCuentaGerenteNavigation)
+                  .WithMany(p => p.Cuenta)
+                  .HasForeignKey(d => d.NCuentaGerente);
+
+        entity.HasOne(d => d.NCuentaUsuarioNavigation)
+                  .WithMany(p => p.Cuenta)
+                  .HasForeignKey(d => d.NCuentaUsuario);
+      });
+
       modelBuilder.Entity<Empleado>(entity =>
       {
         entity.ToTable("empleado");
@@ -82,6 +115,14 @@ namespace P9.AutoModel
 
         entity.Property(e => e.Id).HasColumnName("id");
 
+        entity.Property(e => e.DiasSeguidos)
+                  .HasColumnType("INTEGER (1)")
+                  .HasColumnName("Dias_Seguidos");
+
+        entity.Property(e => e.DiasVaca)
+                  .HasColumnType("INTEGER (2)")
+                  .HasColumnName("Dias_Vaca");
+
         entity.Property(e => e.FechaIncorporacion)
                   .HasColumnType("DATE")
                   .HasColumnName("fecha_incorporacion");
@@ -99,6 +140,10 @@ namespace P9.AutoModel
         entity.Property(e => e.PrimerNombre)
                   .HasColumnType("VARCHAR (30)")
                   .HasColumnName("primer_nombre");
+
+        entity.Property(e => e.Saldo)
+                  .HasColumnType("DECIMAL (30, 2)")
+                  .HasColumnName("saldo");
 
         entity.Property(e => e.SegundoApellido)
                   .HasColumnType("VARCHAR (30)")
@@ -207,6 +252,10 @@ namespace P9.AutoModel
                   .HasColumnType("DATE")
                   .HasColumnName("fecha_liquidacion");
 
+        entity.Property(e => e.FechaPausa)
+                  .HasColumnType("DATE")
+                  .HasColumnName("fecha_pausa");
+
         entity.Property(e => e.FechaSolicitud)
                   .HasColumnType("DATE")
                   .HasColumnName("fecha_solicitud");
@@ -226,10 +275,6 @@ namespace P9.AutoModel
                   .HasColumnName("pago_mes");
 
         entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
-
-        entity.Property(e => e.FechaPausa)
-                  .HasColumnType("DATE")
-                  .HasColumnName("fecha_pausa");
 
         entity.HasOne(d => d.Empleado)
                   .WithMany(p => p.Prestamos)
@@ -329,6 +374,10 @@ namespace P9.AutoModel
                   .HasColumnType("BOOLEAN")
                   .HasColumnName("activo")
                   .HasDefaultValueSql("true");
+
+        entity.Property(e => e.FechaBaja)
+                  .HasColumnType("DATE")
+                  .HasColumnName("fecha_baja");
 
         entity.Property(e => e.Intentos)
                   .HasColumnType("INT (1)")
