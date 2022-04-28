@@ -104,5 +104,35 @@ namespace P9.AutoModel
         return pagos;
       }
     }
+
+    public object Create(int id_Persona, string Pname, string Pap, string Sap, DateOnly bornday)
+    {
+      using (var db = new bancoContext())
+      {
+        var user = new AutoModel.Usuario();
+        user.PersonaId = id_Persona;
+        user.NombreUsuario = Pname + "_" + Pap + Sap;
+        user.Password = bornday.ToString("ddMMyy");
+        user.Saldo = 10000;
+        user.Activo = true;
+        user.Intentos = 0;
+        #region Randomizer
+        Random rnd = new Random();
+        long id_u;
+        bool idFlag;
+        do
+        {
+          id_u = rnd.NextInt64(1, 999999999);
+          idFlag = db.Usuarios.Where(u => u.Id == id_u).Any();
+        } while (idFlag == true);
+        #endregion
+        var person = db.Solicituds.Where(u => u.PersonaId == id_Persona).FirstOrDefault();
+        person.UsuarioId = id_u;
+        user.Id = id_u;
+        db.Usuarios.Add(user);
+        db.SaveChanges();
+        return user;
+      }
+    }
   }
 }

@@ -147,5 +147,73 @@ namespace P9
       }
     }
 
+    public static void ChangeStatus()
+    {
+
+      using (AutoModel.bancoContext db = new())
+      {
+        var query = db.Solicituds.Where(p => p.Estatus == 1).Join
+        (
+            db.Personas, pSolicitud => pSolicitud.PersonaId, persona => persona.Id, (pSolicitud, persona) => new { pSolicitud, persona }
+        ).ToList();
+        WriteLine("Solicitudes:");
+        if (query.Count is 0)
+        {
+          throw new Exception("No Hay Solicitudes Pendientes...");
+        }
+        else
+        {
+          foreach (var item in query)
+          {
+            WriteLine($"Id de la persona: {item.persona.Id} [{item.persona.PrimerNombre} {item.persona.SegundoNombre} {item.persona.PrimerApellido} {item.persona.SegundoApellido}]");
+          }
+          WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+          Write("ID Persona:");
+          int id = int.Parse(ReadLine());
+          var person = db.Solicituds.Where(u => u.PersonaId == id).FirstOrDefault();
+          if (person.Estatus != 1 || person is null)
+          {
+            throw new Exception("Error:Solicitud no encontrada");
+          }
+          else
+          {
+            WriteLine("1-Aprobar\n2-Rechazar");
+            int status = int.Parse(ReadLine());
+            switch (status)
+            {
+              case 1:
+                {
+                  person.Estatus = 2;
+                  WriteLine("Aprobado!");
+
+                  var datos = db.Solicituds.Where(p => p.PersonaId == id).Join(
+                      db.Personas, pSolicitud => pSolicitud.PersonaId, persona => persona.Id, (pSolicitud, persona) => new { pSolicitud, persona }
+                  ).FirstOrDefault();
+
+
+                  db.SaveChanges();
+
+                  var user = new AutoModel.Usuario();
+                  var rUser = user.Create(id, datos.persona.PrimerNombre, datos.persona.PrimerApellido, datos.persona.SegundoApellido, datos.persona.FechaNacimiento);
+                  if (rUser is Exception)
+                  {
+                    throw (Exception)rUser;
+                  }
+
+                  break;
+                }
+              case 2:
+                {
+                  person.Estatus = 3;
+                  WriteLine("Denegado!");
+                  db.SaveChanges();
+                  break;
+                }
+            }
+          }
+        }
+      }
+    }
+
   }
 }

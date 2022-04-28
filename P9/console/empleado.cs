@@ -149,48 +149,73 @@ namespace P9
     public static void calcularPrestamos(AutoModel.Empleado empleado)
     {
       WriteLine("\nCalcular prestamos");
-      Write("Ingrese la cantidad de dinero a solicitar: ");
-      string? cantidad = ReadLine();
-      Write("Ingrese la cantidad de cuotas: ");
-      string? cuotas = ReadLine();
-
-      if (cantidad == null || cuotas == null)
+      using (var db = new AutoModel.bancoContext())
       {
-        throw new Exception("Opción inválida");
+        var query = db.SolicitudPrestamos.Where(p => p.Estatus == 1).Join(db.Prestamos, s => s.PrestamoId, p => p.Id, (p, s) => new { p, s }).ToList();
+
+        if (query.Count == 0)
+        {
+          throw new Exception("No hay prestamos para calcular");
+        }
+
+
+        /*Write("\nIngrese el número de la solicitud: ");
+        string? opcion = ReadLine();
+
+        if (opcion == null)
+        {
+          throw new Exception("Opción inválida");
+        }
+
+        int id = query.ElementAt(int.Parse(opcion) - 1).p.Id;
+        int sid = query.ElementAt(int.Parse(opcion) - 1).s.Id;
+        long uid = query.ElementAt(int.Parse(opcion) - 1).p.UsuarioId;
+        decimal cantidad = query.ElementAt(int.Parse(opcion) - 1).p.Cantidad;
+
+
+        Write("Ingrese la cantidad de dinero a solicitar: ");
+        string? cantidad = ReadLine();
+        Write("Ingrese la cantidad de cuotas: ");
+        string? cuotas = ReadLine();
+
+        if (cantidad == null || cuotas == null)
+        {
+          throw new Exception("Opción inválida");
+        }
+
+        decimal cantidadDecimal = decimal.Parse(cantidad);
+        int cuotasInt = int.Parse(cuotas);
+
+        switch (cuotasInt)
+        {
+          case 6:
+            decimal total = ((cantidadDecimal * 0.12m) + cantidadDecimal);
+            decimal cuota = total / 6;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 12:
+            total = ((cantidadDecimal * 0.18m) + cantidadDecimal);
+            cuota = total / 12;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 24:
+            total = ((cantidadDecimal * 0.279m) + cantidadDecimal);
+            cuota = total / 24;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 36:
+            total = ((cantidadDecimal * 0.42m) + cantidadDecimal);
+            cuota = total / 36;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+          default:
+            throw new Exception("Cuotas inválidas");
+        }*/
+
       }
-
-      decimal cantidadDecimal = decimal.Parse(cantidad);
-      int cuotasInt = int.Parse(cuotas);
-
-      switch (cuotasInt)
-      {
-        case 6:
-          decimal total = ((cantidadDecimal * 0.12m) + cantidadDecimal);
-          decimal cuota = total / 6;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
-
-        case 12:
-          total = ((cantidadDecimal * 0.18m) + cantidadDecimal);
-          cuota = total / 12;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
-
-        case 24:
-          total = ((cantidadDecimal * 0.279m) + cantidadDecimal);
-          cuota = total / 24;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
-
-        case 36:
-          total = ((cantidadDecimal * 0.42m) + cantidadDecimal);
-          cuota = total / 36;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
-        default:
-          throw new Exception("Cuotas inválidas");
-      }
-
     }
 
     public static void verUltimoPrestamo(AutoModel.Empleado empleado)
