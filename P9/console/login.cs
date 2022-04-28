@@ -109,9 +109,7 @@ namespace P9
 
         if (gerente is AutoModel.Gerente)
         {
-          WriteLine("\nBienvenido " + ((AutoModel.Gerente)gerente).PrimerNombre + " " + ((AutoModel.Gerente)gerente).PrimerApellido);
-          Write("Presione una tecla para continuar...");
-          Read();
+          manager((AutoModel.Gerente)gerente);
         }
       }
       catch (System.Exception ex)

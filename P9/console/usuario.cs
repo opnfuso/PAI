@@ -87,7 +87,6 @@ namespace P9
         Read();
       }
     }
-
     public static void verHistorial(AutoModel.Usuario usuario)
     {
       try
@@ -146,7 +145,21 @@ namespace P9
         Read();
       }
     }
+    public static void pedirPrestamo(AutoModel.Usuario usuario)
+    {
+      if (usuario.Saldo < 10000)
+      {
+        throw new Exception("Menos del saldo inicial");
+      }
+      var prestamo = new AutoModel.Prestamo();
+      WriteLine("\n\tPedir prestamo");
+      Write("Monto del Prestamo:");
+      var monto = decimal.Parse(ReadLine());
+      Write("Meses:");
+      var meses = int.Parse(ReadLine());
 
+      var rPrestamo = prestamo.Create(usuario.Id, usuario.Saldo, monto, meses);
+    }
     public static void ChangeStatus()
     {
 
@@ -214,6 +227,5 @@ namespace P9
         }
       }
     }
-
   }
 }

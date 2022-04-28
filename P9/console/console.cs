@@ -59,8 +59,7 @@ namespace P9
               exit = true;
               break;
             default:
-              WriteLine("Opción inválida");
-              break;
+              throw new Exception("Opción inválida");
           }
         }
         catch (System.Exception ex)

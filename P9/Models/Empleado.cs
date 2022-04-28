@@ -149,6 +149,79 @@ namespace P9.AutoModel
         return prestamos;
       }
     }
+
+    public object Create(string Pn, string? Sn, string Pa, string Sa, DateOnly nacimiento, string pass)
+    {
+      using (var db = new AutoModel.bancoContext())
+      {
+        if (Pn == null || Pa == null || Sa == null || nacimiento == null || pass == null)
+        {
+          return new Exception("Algun dato es nulo");
+        }
+
+        bool flag = Pn.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Nombres no pueden llevar numeros..");
+        }
+        flag = Pn.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Nombres no pueden llevar simbolos..");
+        }
+
+        if (Sn is not null)
+        {
+          flag = Sn.Any(char.IsDigit);
+          if (flag == true)
+          {
+            return new Exception("Los Nombres no pueden llevar numeros..");
+          }
+          flag = Sn.Any(char.IsSymbol);
+          if (flag == true)
+          {
+            return new Exception("Los Nombres no pueden llevar simbolos..");
+          }
+        }
+
+        flag = Pa.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar numeros..");
+        }
+        flag = Pa.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar simbolos..");
+        }
+
+        flag = Sa.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar numeros..");
+        }
+        flag = Sa.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar simbolos..");
+        }
+
+        var empleado = new AutoModel.Empleado();
+
+        empleado.PrimerNombre = Pn;
+        empleado.SegundoNombre = Sn;
+        empleado.PrimerApellido = Pa;
+        empleado.SegundoApellido = Sa;
+        empleado.Activo = true;
+        empleado.FechaNacimiento = nacimiento;
+        empleado.Password = pass;
+
+        db.Empleados.Add(empleado);
+        db.SaveChanges();
+
+        return empleado;
+      }
+    }
   }
 }
 

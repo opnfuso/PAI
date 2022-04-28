@@ -31,5 +31,80 @@ namespace P9.AutoModel
     public virtual Usuario Usuario { get; set; } = null!;
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }
+
+    public object Create(long UsuarioId, decimal saldo, decimal monto, int meses)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = new AutoModel.Prestamo();
+
+        prestamo.UsuarioId = UsuarioId;
+
+        prestamo.Cantidad = monto;
+
+        if (prestamo.Cantidad > (saldo / 2))
+        {
+          return new Exception("El Monto no puede exceder el 50% del Saldo del Usuario.");
+        }
+
+        prestamo.Meses = meses;
+
+        if (!(prestamo.Meses == 6 || prestamo.Meses == 12 || prestamo.Meses == 24 || prestamo.Meses == 36))
+        {
+          return new Exception("Los meses solo pueden ser 6,12,24 o 36");
+        }
+
+        switch (prestamo.Meses)
+        {
+          case 6:
+            {
+              prestamo.Interes = 12;
+              break;
+            }
+          case 12:
+            {
+              prestamo.Interes = 18;
+              break;
+            }
+          case 24:
+            {
+              prestamo.Interes = 27.9M;
+              break;
+            }
+          case 36:
+            {
+              prestamo.Interes = 42;
+              break;
+            }
+        }
+
+        prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
+
+        var time = DateTime.Now;
+        prestamo.FechaSolicitud = DateOnly.FromDateTime(time);
+
+        prestamo.FechaLiquidacion = prestamo.FechaSolicitud.AddMonths(prestamo.Meses);
+
+        prestamo.Activo = false;
+
+        db.Prestamos.Add(prestamo);
+        db.SaveChanges();
+
+        var SoliPrestamo = new AutoModel.SolicitudPrestamo()
+        {
+          UsuarioId = prestamo.UsuarioId,
+          PrestamoId = prestamo.Id,
+          Estatus = 1
+
+        };
+
+        db.SolicitudPrestamos.Add(SoliPrestamo);
+        db.SaveChanges();
+
+
+        return prestamo;
+      }
+    }
+
   }
 }
