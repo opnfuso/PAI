@@ -45,7 +45,6 @@ namespace P9.AutoModel
         var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
         var prestamos = db.Prestamos.Where(p => p.UsuarioId == uid).ToList();
         var solicitud = db.SolicitudPrestamos.Where(p => p.Id == sid).FirstOrDefault();
-        bool flag = false;
         int aid = 0;
 
         if (prestamo == null || solicitud == null || prestamos.Count >= 3)
@@ -57,7 +56,6 @@ namespace P9.AutoModel
         {
           if (item.Activo == true)
           {
-            flag = true;
             aid = item.Id;
           }
         }
@@ -83,6 +81,7 @@ namespace P9.AutoModel
         solicitud.Estatus = 2;
         prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
         prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
+        prestamo.Activo = true;
         db.SaveChanges();
         return prestamo;
       }
@@ -217,6 +216,12 @@ namespace P9.AutoModel
         empleado.Password = pass;
 
         db.Empleados.Add(empleado);
+        db.SaveChanges();
+
+        var cuenta = new AutoModel.Cuenta();
+        cuenta.NCuentaEmpleado = empleado.Id;
+        cuenta.Tipo = 2;
+        db.Cuentas.Add(cuenta);
         db.SaveChanges();
 
         return empleado;

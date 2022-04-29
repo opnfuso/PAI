@@ -131,6 +131,13 @@ namespace P9.AutoModel
         user.Id = id_u;
         db.Usuarios.Add(user);
         db.SaveChanges();
+
+        var cuenta = new AutoModel.Cuenta();
+        cuenta.NCuentaUsuario = id_u;
+        cuenta.Tipo = 1;
+        db.Cuentas.Add(cuenta);
+        db.SaveChanges();
+
         return user;
       }
     }

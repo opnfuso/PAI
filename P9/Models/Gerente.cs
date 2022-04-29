@@ -42,5 +42,233 @@ namespace P9.AutoModel
         return gerente;
       }
     }
+
+    public object Create(string Pa, string Sa, string Pn, string Sn, string pass, DateOnly nacimiento)
+    {
+      using (var db = new AutoModel.bancoContext())
+      {
+        if (Pn == null || Pa == null || Sa == null || pass == null)
+        {
+          return new Exception("Algun dato es nulo");
+        }
+
+        bool flag = Pn.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Nombres no pueden llevar numeros..");
+        }
+        flag = Pn.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Nombres no pueden llevar simbolos..");
+        }
+
+        if (Sn is not null)
+        {
+          flag = Sn.Any(char.IsDigit);
+          if (flag == true)
+          {
+            return new Exception("Los Nombres no pueden llevar numeros..");
+          }
+          flag = Sn.Any(char.IsSymbol);
+          if (flag == true)
+          {
+            return new Exception("Los Nombres no pueden llevar simbolos..");
+          }
+        }
+
+        flag = Pa.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar numeros..");
+        }
+        flag = Pa.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar simbolos..");
+        }
+
+        flag = Sa.Any(char.IsDigit);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar numeros..");
+        }
+        flag = Sa.Any(char.IsSymbol);
+        if (flag == true)
+        {
+          return new Exception("Los Apellidos no pueden llevar simbolos..");
+        }
+
+        var gerente = new AutoModel.Gerente();
+
+        gerente.PrimerNombre = Pn;
+        gerente.SegundoNombre = Sn;
+        gerente.PrimerApellido = Pa;
+        gerente.SegundoApellido = Sa;
+        gerente.Password = pass;
+        gerente.FechaIncorporacion = DateOnly.FromDateTime(DateTime.Now);
+        gerente.FechaNacimiento = nacimiento;
+
+        db.Gerentes.Add(gerente);
+        db.SaveChanges();
+
+        var cuenta = new AutoModel.Cuenta();
+        cuenta.NCuentaGerente = gerente.Id;
+        cuenta.Tipo = 1;
+        db.Cuentas.Add(cuenta);
+        db.SaveChanges();
+
+        return gerente;
+      }
+    }
+
+    public object AceptarPrestamo(int id, int sid, long uid)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
+        var prestamos = db.Prestamos.Where(p => p.UsuarioId == uid).ToList();
+        var solicitud = db.SolicitudPrestamos.Where(p => p.Id == sid).FirstOrDefault();
+        int aid = 0;
+
+        if (prestamo == null || solicitud == null || prestamos.Count >= 3)
+        {
+          return new Exception("No se encontró el prestamo o la solicitud");
+        }
+
+        foreach (var item in prestamos)
+        {
+          if (item.Activo == true)
+          {
+            aid = item.Id;
+          }
+        }
+
+        var ultimoPago = db.Pagos.Where(p => p.PrestamoId == aid).OrderByDescending(p => p.Fecha).FirstOrDefault();
+        var prestamoActivo = db.Prestamos.Where(p => p.Id == aid).FirstOrDefault();
+
+        if (ultimoPago == null || prestamoActivo == null)
+        {
+          return new Exception("No se encontró el ultimo pago o el prestamo");
+        }
+
+        if (ultimoPago.Fecha.AddMonths(1) < prestamoActivo.FechaLiquidacion)
+        {
+          return new Exception("No estas en el ultimo pago");
+        }
+
+        if (prestamo.FechaSolicitud.AddDays(2) > DateOnly.FromDateTime(DateTime.Now))
+        {
+          return new Exception("No se puede aceptar el prestamo antes de 2 días");
+        }
+
+        solicitud.Estatus = 2;
+        prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
+        prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
+        prestamo.Activo = true;
+        db.SaveChanges();
+        return prestamo;
+      }
+    }
+
+    public object DenegarPrestamo(int sid)
+    {
+      using (var db = new bancoContext())
+      {
+        var solicitud = db.SolicitudPrestamos.Where(p => p.Id == sid).FirstOrDefault();
+
+        if (solicitud == null)
+        {
+          return new Exception("Solicitud no existente");
+        }
+
+        solicitud.Estatus = 3;
+        db.SaveChanges();
+        return solicitud;
+      }
+    }
+
+    public object CrearPrestamo(int gid, decimal cantidad, int meses)
+    {
+      using (var db = new bancoContext())
+      {
+        var gerente = db.Gerentes.Where(g => g.Id == gid).FirstOrDefault();
+        var cuenta = db.Cuentas.Where(c => c.NCuentaGerente == gid).FirstOrDefault();
+        var prestamo = new AutoModel.Prestamo();
+
+        if (gerente == null || cuenta == null)
+        {
+          return new Exception("Gerente o cuenta no existente");
+        }
+
+        if (cantidad <= 0)
+        {
+          return new Exception("La cantidad debe ser mayor a 0");
+        }
+
+        if (meses != 6 && meses != 12 && meses != 24 && meses != 36)
+        {
+          return new Exception("El numero de meses debe ser 6, 12, 24 o 36");
+        }
+
+        prestamo.Meses = meses;
+        prestamo.Cantidad = cantidad;
+        prestamo.GerenteId = gerente.Id;
+        prestamo.FechaSolicitud = DateOnly.FromDateTime(DateTime.Now);
+        prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now); ;
+        prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(meses));
+        prestamo.Activo = true;
+        prestamo.Interes = 10.2m;
+        prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
+        db.Prestamos.Add(prestamo);
+        db.SaveChanges();
+
+        return prestamo;
+      }
+    }
+
+    public object BajaEmpleado(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var empleado = db.Empleados.Where(e => e.Id == id).FirstOrDefault();
+
+        if (empleado == null)
+        {
+          return new Exception("Empleado no existente");
+        }
+
+        empleado.Activo = false;
+        db.SaveChanges();
+        return empleado;
+      }
+    }
+
+    public object BajaUsuario(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var usuario = db.Usuarios.Where(u => u.Id == id).FirstOrDefault();
+        var prestamos = db.Prestamos.Where(p => p.UsuarioId == id).ToList();
+
+        if (usuario == null || prestamos.Count > 0)
+        {
+          return new Exception("Usuario o prestamos no existentes");
+        }
+
+        foreach (var item in prestamos)
+        {
+          if (DateOnly.FromDateTime(DateTime.Now) < item.FechaAprobacion.Value.AddMonths(6))
+          {
+            return new Exception("No se puede dar de baja el usuario, el ultimo registro debe ser mayor a 6 meses");
+          }
+        }
+
+        usuario.Activo = false;
+        usuario.FechaBaja = DateOnly.FromDateTime(DateTime.Now);
+        db.SaveChanges();
+        return usuario;
+      }
+    }
   }
 }

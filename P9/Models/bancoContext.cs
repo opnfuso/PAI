@@ -344,8 +344,7 @@ namespace P9.AutoModel
 
         entity.HasOne(d => d.Prestamo)
                   .WithMany(p => p.SolicitudPrestamos)
-                  .HasForeignKey(d => d.PrestamoId)
-                  .OnDelete(DeleteBehavior.ClientSetNull);
+                  .HasForeignKey(d => d.PrestamoId);
 
         entity.HasOne(d => d.Usuario)
                   .WithMany(p => p.SolicitudPrestamos)

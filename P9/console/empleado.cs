@@ -61,7 +61,7 @@ namespace P9
     {
       using (var db = new AutoModel.bancoContext())
       {
-        var query = db.SolicitudPrestamos.Where(p => p.Estatus == 1).Join(db.Prestamos, pSolicitud => pSolicitud.PrestamoId, prestamo => prestamo.Id, (pSolicitud, prestamo) => new { pSolicitud, prestamo }).ToList();
+        var query = db.SolicitudPrestamos.Where(p => p.Estatus == 1 && p.Prestamo.Meses <= 12).Join(db.Prestamos, pSolicitud => pSolicitud.PrestamoId, prestamo => prestamo.Id, (pSolicitud, prestamo) => new { pSolicitud, prestamo }).ToList();
 
         if (query.Count == 0)
         {
