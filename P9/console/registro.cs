@@ -33,7 +33,7 @@ namespace P9
 
       if (newPersona is Exception)
       {
-        throw new Exception("Error al crear la persona");
+        throw (Exception)newPersona;
       }
 
       WriteLine("Persona creada con exito");

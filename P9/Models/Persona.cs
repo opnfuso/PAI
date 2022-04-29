@@ -147,6 +147,7 @@ namespace P9.AutoModel
         var soli = new Solicitud()
         {
           PersonaId = persona.Id,
+          UsuarioId = 100,
           Estatus = 1
         };
 

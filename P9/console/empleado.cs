@@ -151,46 +151,64 @@ namespace P9
 
     public static void calcularPrestamos(AutoModel.Empleado empleado)
     {
-      Write("Ingrese la cantidad de dinero a solicitar: ");
-      string? cantidad = ReadLine();
-      Write("Ingrese la cantidad de cuotas: ");
-      string? cuotas = ReadLine();
-
-      if (cantidad == null || cuotas == null)
+      using (var db = new AutoModel.bancoContext())
       {
-        throw new Exception("Opción inválida");
-      }
+        Write("Ingrese el id del usuario a calcular prestamo : ");
+        string? rid = ReadLine();
+        if (rid == null)
+        {
+          throw new Exception("el id es nulo");
+        }
+        Write("Ingrese la cantidad de dinero a solicitar: ");
+        string? cantidad = ReadLine();
+        Write("Ingrese la cantidad de cuotas: ");
+        string? cuotas = ReadLine();
 
-      decimal cantidadDecimal = decimal.Parse(cantidad);
-      int cuotasInt = int.Parse(cuotas);
+        if (cantidad == null || cuotas == null)
+        {
+          throw new Exception("Opción inválida");
+        }
 
-      switch (cuotasInt)
-      {
-        case 6:
-          decimal total = ((cantidadDecimal * 0.12m) + cantidadDecimal);
-          decimal cuota = total / 6;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
+        decimal cantidadDecimal = decimal.Parse(cantidad);
+        int cuotasInt = int.Parse(cuotas);
+        int id = int.Parse(rid);
 
-        case 12:
-          total = ((cantidadDecimal * 0.18m) + cantidadDecimal);
-          cuota = total / 12;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
+        var cuenta = db.Cuentas.Where(c => c.Id == id).FirstOrDefault();
+        var user = db.Usuarios.Where(u => u.Id == cuenta.NCuentaUsuario).FirstOrDefault();
 
-        case 24:
-          total = ((cantidadDecimal * 0.279m) + cantidadDecimal);
-          cuota = total / 24;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
+        if (cantidadDecimal > (user.Saldo * 0.5m))
+        {
+          throw new Exception("El prestamo es mayor al 50% del saldo");
+        }
 
-        case 36:
-          total = ((cantidadDecimal * 0.42m) + cantidadDecimal);
-          cuota = total / 36;
-          WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
-          break;
-        default:
-          throw new Exception("Cuotas inválidas");
+        switch (cuotasInt)
+        {
+          case 6:
+            decimal total = ((cantidadDecimal * 0.12m) + cantidadDecimal);
+            decimal cuota = total / 6;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 12:
+            total = ((cantidadDecimal * 0.18m) + cantidadDecimal);
+            cuota = total / 12;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 24:
+            total = ((cantidadDecimal * 0.279m) + cantidadDecimal);
+            cuota = total / 24;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+
+          case 36:
+            total = ((cantidadDecimal * 0.42m) + cantidadDecimal);
+            cuota = total / 36;
+            WriteLine($"\nEl total a pagar es de {total}$ y la cuota mensual es de {cuota}$");
+            break;
+          default:
+            throw new Exception("Cuotas inválidas");
+        }
       }
     }
 
