@@ -6,7 +6,9 @@ namespace P9
   {
     public static void Main(string[] args)
     {
+      AddDayVacations();
       checarBajaUsuario();
+      checarPrestamos();
       console();
     }
   }

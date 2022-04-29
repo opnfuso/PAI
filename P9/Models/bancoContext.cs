@@ -175,19 +175,24 @@ namespace P9.AutoModel
                   .HasColumnType("DATETIME")
                   .HasColumnName("fecha");
 
+        entity.Property(e => e.GerenteId).HasColumnName("gerente_id");
+
         entity.Property(e => e.PrestamoId).HasColumnName("prestamo_id");
 
         entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
 
+        entity.HasOne(d => d.Gerente)
+                  .WithMany(p => p.Pagos)
+                  .HasForeignKey(d => d.GerenteId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
         entity.HasOne(d => d.Prestamo)
                   .WithMany(p => p.Pagos)
-                  .HasForeignKey(d => d.PrestamoId)
-                  .OnDelete(DeleteBehavior.ClientSetNull);
+                  .HasForeignKey(d => d.PrestamoId);
 
         entity.HasOne(d => d.Usuario)
                   .WithMany(p => p.Pagos)
-                  .HasForeignKey(d => d.UsuarioId)
-                  .OnDelete(DeleteBehavior.ClientSetNull);
+                  .HasForeignKey(d => d.UsuarioId);
       });
 
       modelBuilder.Entity<Persona>(entity =>
@@ -304,15 +309,9 @@ namespace P9.AutoModel
                   .HasColumnName("estatus")
                   .HasDefaultValueSql("1");
 
-        entity.Property(e => e.GerenteId).HasColumnName("gerente_id");
-
         entity.Property(e => e.PersonaId).HasColumnName("persona_id");
 
         entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
-
-        entity.HasOne(d => d.Gerente)
-                  .WithMany(p => p.Solicituds)
-                  .HasForeignKey(d => d.GerenteId);
 
         entity.HasOne(d => d.Persona)
                   .WithMany(p => p.Solicituds)

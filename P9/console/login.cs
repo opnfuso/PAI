@@ -9,31 +9,90 @@ namespace P9
     {
       try
       {
-        WriteLine("\n\tBanco de Préstamos");
-        Write("Ingrese su nombre de usuario: ");
-        string? res_user = ReadLine();
-        Write("Ingrese su contraseña: ");
-        string? pass = ReadLine();
-
-        if (res_user == null || pass == null)
+        using (var db = new AutoModel.bancoContext())
         {
-          throw new Exception("Usuario o contraseña inválidos");
-        }
 
-        var Usuario = new AutoModel.Usuario();
-        var usuario = Usuario.login(res_user, pass);
+          WriteLine("\n\tBanco de Préstamos");
+          Write("Ingrese su nombre de usuario: ");
+          string? res_user = ReadLine();
+          Write("Ingrese su contraseña: ");
+          string? pass = ReadLine();
 
-        if (usuario is Exception)
-        {
-          throw (Exception)usuario;
-        }
+          if (res_user == null || pass == null)
+          {
+            throw new Exception("Usuario o contraseña inválidos");
+          }
 
-        if (usuario is AutoModel.Usuario)
-        {
-          // WriteLine("\nBienvenido " + ((AutoModel.Usuario)usuario).NombreUsuario);
-          // Write("Presione una tecla para continuar...");
-          // Read();
-          user((AutoModel.Usuario)usuario);
+          int usr = int.Parse(res_user);
+
+          var cuenta = db.Cuentas.Where(u => u.Id == usr).FirstOrDefault();
+          if (cuenta == null)
+          {
+            throw new Exception("Usuario o contraseña inválidos");
+          }
+
+          switch (cuenta.Tipo)
+          {
+            case 1:
+              var gerente = new AutoModel.Gerente();
+
+              var rGerente = gerente.login(cuenta.NCuentaGerente.Value, pass);
+
+              if (rGerente is Exception)
+              {
+                throw (Exception)rGerente;
+              }
+
+              if (rGerente is AutoModel.Gerente)
+              {
+                WriteLine("\n\tBienvenido Gerente");
+                manager(gerente);
+              }
+
+              break;
+
+            case 2:
+              var empleado = new AutoModel.Empleado();
+
+              var rEmpleado = empleado.login(cuenta.NCuentaEmpleado.Value, pass);
+
+              if (rEmpleado is Exception)
+              {
+                throw (Exception)rEmpleado;
+              }
+
+              if (rEmpleado is AutoModel.Empleado)
+              {
+                WriteLine("\n\tBienvenido Empleado");
+                empleado = (AutoModel.Empleado)rEmpleado;
+                employee(empleado);
+              }
+
+              break;
+
+            case 3:
+              var usuario = new AutoModel.Usuario();
+
+              var rUsuario = usuario.login(cuenta.NCuentaUsuario.Value, pass);
+
+              if (rUsuario is Exception)
+              {
+                throw (Exception)rUsuario;
+              }
+
+              if (rUsuario is AutoModel.Usuario)
+              {
+                WriteLine("\n\tBienvenido Usuario");
+                usuario = (AutoModel.Usuario)rUsuario;
+                user(usuario);
+              }
+
+              break;
+            default:
+              break;
+          }
+
+
         }
       }
       catch (System.Exception ex)
@@ -44,45 +103,45 @@ namespace P9
       }
     }
 
-    public static void loginEmpleado()
-    {
-      try
-      {
-        WriteLine("\n\tBanco de Préstamos");
-        Write("Ingrese su número de nomina: ");
-        string? user = ReadLine();
-        Write("Ingrese su contraseña: ");
-        string? pass = ReadLine();
+    /* public static void loginEmpleado()
+     {
+       try
+       {
+         WriteLine("\n\tBanco de Préstamos");
+         Write("Ingrese su número de nomina: ");
+         string? user = ReadLine();
+         Write("Ingrese su contraseña: ");
+         string? pass = ReadLine();
 
-        if (user == null || pass == null)
-        {
-          throw new Exception("Usuario o contraseña inválidos");
-        }
+         if (user == null || pass == null)
+         {
+           throw new Exception("Usuario o contraseña inválidos");
+         }
 
-        int usr = int.Parse(user);
+         int usr = int.Parse(user);
 
-        var Empleado = new AutoModel.Empleado();
-        var empleado = Empleado.login(usr, pass);
+         var Empleado = new AutoModel.Empleado();
+         var empleado = Empleado.login(usr, pass);
 
-        if (empleado is Exception)
-        {
-          throw (Exception)empleado;
-        }
+         if (empleado is Exception)
+         {
+           throw (Exception)empleado;
+         }
 
-        if (empleado is AutoModel.Empleado)
-        {
-          employee((AutoModel.Empleado)empleado);
-        }
-      }
-      catch (System.Exception ex)
-      {
-        WriteLine("\nError: " + ex.Message);
-        Write("Presione una tecla para continuar...");
-        Read();
-      }
-    }
+         if (empleado is AutoModel.Empleado)
+         {
+           employee((AutoModel.Empleado)empleado);
+         }
+       }
+       catch (System.Exception ex)
+       {
+         WriteLine("\nError: " + ex.Message);
+         Write("Presione una tecla para continuar...");
+         Read();
+       }
+     }*/
 
-    public static void loginAdmin()
+    /*public static void loginAdmin()
     {
       try
       {
@@ -118,6 +177,6 @@ namespace P9
         Write("Presione una tecla para continuar...");
         Read();
       }
-    }
+    }*/
   }
 }

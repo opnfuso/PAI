@@ -25,10 +25,8 @@ namespace P9
         {
           WriteLine("\n\tBanco de Préstamos");
           WriteLine("1.Iniciar sesión");
-          WriteLine("2.Iniciar sesión como empleado");
-          WriteLine("3.Iniciar sesión como gerente");
-          WriteLine("4.Registrarse");
-          WriteLine("5.Salir");
+          WriteLine("2.Registrarse");
+          WriteLine("3.Salir");
           Write("Ingrese una opción : ");
           string? res = ReadLine();
 
@@ -44,20 +42,15 @@ namespace P9
             case 1:
               login();
               break;
+
             case 2:
-              loginEmpleado();
+              register();
               break;
 
             case 3:
-              loginAdmin();
-              break;
-
-            case 4:
-              register();
-              break;
-            case 5:
               exit = true;
               break;
+
             default:
               throw new Exception("Opción inválida");
           }

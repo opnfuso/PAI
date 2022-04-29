@@ -73,8 +73,10 @@ namespace P9.AutoModel
           return new Exception("No estas en el ultimo pago");
         }
 
-        if (prestamo.FechaSolicitud.AddDays(2) > DateOnly.FromDateTime(DateTime.Now))
+        if (prestamo.FechaSolicitud.AddDays(2) < DateOnly.FromDateTime(DateTime.Now))
         {
+          solicitud.Estatus = 3;
+          db.SaveChanges();
           return new Exception("No se puede aceptar el prestamo antes de 2 días");
         }
 
@@ -82,6 +84,20 @@ namespace P9.AutoModel
         prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
         prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
         prestamo.Activo = true;
+
+        for (int i = 0; i < prestamo.Meses; i++)
+        {
+          var pago = new Pago
+          {
+            PrestamoId = prestamo.Id,
+            UsuarioId = prestamo.UsuarioId,
+            Cantidad = prestamo.PagoMes / prestamo.Meses,
+            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+          };
+
+          db.Pagos.Add(pago);
+        }
+
         db.SaveChanges();
         return prestamo;
       }

@@ -32,11 +32,11 @@ namespace P9.AutoModel
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 
-    public object login(string user, string pass)
+    public object login(long id, string pass)
     {
       using (var db = new bancoContext())
       {
-        var usuario = db.Usuarios.Where(u => u.NombreUsuario == user).FirstOrDefault();
+        var usuario = db.Usuarios.Where(u => u.Id == id).FirstOrDefault();
 
         if (usuario == null)
         {
@@ -138,6 +138,21 @@ namespace P9.AutoModel
         db.Cuentas.Add(cuenta);
         db.SaveChanges();
 
+        return user;
+      }
+    }
+
+    public object AddSaldo(long id, decimal saldo)
+    {
+      using (var db = new bancoContext())
+      {
+        var user = db.Usuarios.Where(u => u.Id == id).FirstOrDefault();
+        if (user == null)
+        {
+          return new Exception("Usuario no encontrado");
+        }
+        user.Saldo += saldo;
+        db.SaveChanges();
         return user;
       }
     }

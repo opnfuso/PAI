@@ -9,6 +9,8 @@ namespace P9.AutoModel
     {
       Prestamos = new HashSet<Prestamo>();
       Solicituds = new HashSet<Solicitud>();
+      Pagos = new HashSet<Pago>();
+      Cuenta = new HashSet<Cuenta>();
     }
 
     public int Id { get; set; }
@@ -26,6 +28,7 @@ namespace P9.AutoModel
 
     public virtual ICollection<Cuenta> Cuenta { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
+    public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 
     public object login(int user, string pass)
@@ -166,6 +169,20 @@ namespace P9.AutoModel
         prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
         prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
         prestamo.Activo = true;
+
+        for (int i = 0; i < prestamo.Meses; i++)
+        {
+          var pago = new Pago
+          {
+            PrestamoId = prestamo.Id,
+            UsuarioId = prestamo.UsuarioId,
+            Cantidad = prestamo.PagoMes / prestamo.Meses,
+            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+          };
+
+          db.Pagos.Add(pago);
+        }
+
         db.SaveChanges();
         return prestamo;
       }
@@ -220,6 +237,20 @@ namespace P9.AutoModel
         prestamo.Activo = true;
         prestamo.Interes = 10.2m;
         prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
+
+        for (int i = 0; i < prestamo.Meses; i++)
+        {
+          var pago = new Pago
+          {
+            PrestamoId = prestamo.Id,
+            UsuarioId = prestamo.UsuarioId,
+            Cantidad = prestamo.PagoMes / prestamo.Meses,
+            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+          };
+
+          db.Pagos.Add(pago);
+        }
+
         db.Prestamos.Add(prestamo);
         db.SaveChanges();
 
@@ -268,6 +299,79 @@ namespace P9.AutoModel
         usuario.FechaBaja = DateOnly.FromDateTime(DateTime.Now);
         db.SaveChanges();
         return usuario;
+      }
+    }
+
+    public object PausarPrestamo(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
+
+        if (prestamo == null)
+        {
+          return new Exception("Prestamo no existente");
+        }
+
+        prestamo.Activo = false;
+        prestamo.FechaPausa = DateOnly.FromDateTime(DateTime.Now);
+        db.SaveChanges();
+        return prestamo;
+      }
+    }
+
+    public object ReanudarPrestamo(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
+        if (prestamo == null)
+        {
+          return new Exception("Prestamo no existente");
+        }
+
+        var pagos = db.Pagos.Where(p => p.PrestamoId == id && p.Fecha > prestamo.FechaPausa).ToList();
+
+        if (pagos.Count <= 0)
+        {
+          return new Exception("No se puede reaudar el prestamo, no hay pagos posteriores a la fecha de pausa");
+        }
+
+        foreach (var pago in pagos)
+        {
+          var diff = DateTime.Now.Subtract(pago.Fecha.ToDateTime(TimeOnly.Parse("00:00:00 AM")));
+          var presta = db.Prestamos.Where(p => p.Id == pago.PrestamoId).FirstOrDefault();
+
+          if (presta is null)
+          {
+            return new Exception("Prestamo no existente");
+          }
+
+          pago.Fecha = DateOnly.FromDateTime(pago.Fecha.ToDateTime(TimeOnly.Parse("00:00:00 AM")).AddDays(diff.Days));
+
+          presta.FechaLiquidacion = DateOnly.FromDateTime(presta.FechaLiquidacion.Value.ToDateTime(TimeOnly.Parse("00:00:00 AM")).AddDays(diff.Days));
+        }
+
+        prestamo.Activo = true;
+        prestamo.FechaPausa = null;
+        db.SaveChanges();
+        return prestamo;
+      }
+    }
+
+    public object AddSaldo(int id, decimal cantidad)
+    {
+      using (var db = new bancoContext())
+      {
+        var gerente = db.Gerentes.Where(c => c.Id == id).FirstOrDefault();
+        if (gerente == null)
+        {
+          return new Exception("Cuenta no existente");
+        }
+
+        gerente.Saldo += cantidad;
+        db.SaveChanges();
+        return gerente;
       }
     }
   }

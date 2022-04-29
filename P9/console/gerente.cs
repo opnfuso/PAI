@@ -18,10 +18,12 @@ namespace P9
         WriteLine("5.Dar de baja empleados");
         WriteLine("6.Dar de baja usuarios");
         WriteLine("7.Pausar prestamos");
-        WriteLine("8.Pedir un prestamo");
-        WriteLine("9.Aprobar solicitudes de usuarios");
-        WriteLine("10.Añadir gerente");
-        WriteLine("11.Salir");
+        WriteLine("8.Reanudar prestamos");
+        WriteLine("9.Pedir un prestamo");
+        WriteLine("10.Aprobar solicitudes de usuarios");
+        WriteLine("11.Añadir gerente");
+        WriteLine("12.Añadir saldo");
+        WriteLine("13.Salir");
         Write("Ingrese una opción: ");
         string? opcion = ReadLine();
 
@@ -37,7 +39,7 @@ namespace P9
             break;
 
           case "2":
-            // pedirVacaciones(gerente);
+            pedirVacaciones(gerente);
             break;
 
           case "3":
@@ -45,7 +47,7 @@ namespace P9
             break;
 
           case "4":
-            // generarReportes(gerente);
+            generarReportes();
             break;
 
           case "5":
@@ -53,26 +55,34 @@ namespace P9
             break;
 
           case "6":
-            // bajaUsuarios(gerente);
+            bajaUsuarios(gerente);
             break;
 
           case "7":
-            // pausarPrestamos(gerente);
+            pausarPrestamos(gerente);
             break;
 
           case "8":
-            pedirPrestamoGerente(gerente);
+            reanudarPrestamos(gerente);
             break;
 
           case "9":
-            aceptarUsuarios(gerente);
+            pedirPrestamoGerente(gerente);
             break;
 
           case "10":
-            addGerente(gerente);
+            aceptarUsuarios(gerente);
             break;
 
           case "11":
+            addGerente(gerente);
+            break;
+
+          case "12":
+            addSaldoGerente(gerente);
+            break;
+
+          case "13":
             salir = true;
             break;
 
@@ -362,6 +372,482 @@ namespace P9
           }
         }
       }
+    }
+    public static void pausarPrestamos(AutoModel.Gerente gerente)
+    {
+      Write("Ingrese el id del prestamo a pausar : ");
+      string? id = ReadLine();
+      var rGerente = gerente.PausarPrestamo(int.Parse(id));
+
+      if (rGerente is Exception)
+      {
+        throw new Exception("Error al pausar el prestamo");
+      }
+
+      WriteLine("Prestamo pausado con exito");
+    }
+
+    public static void reanudarPrestamos(AutoModel.Gerente gerente)
+    {
+      using (var db = new AutoModel.bancoContext())
+      {
+        var prestamos = db.Prestamos.Where(p => p.Activo == false && p.FechaPausa != null).ToList();
+
+        if (prestamos.Count is 0)
+        {
+          throw new Exception("No hay prestamos pausados");
+        }
+        else
+        {
+          foreach (var item in prestamos)
+          {
+            WriteLine($"Id del prestamo: {item.Id} fecha de pausa: {item.FechaPausa}");
+          }
+          Write("ID Prestamo : ");
+          int id = int.Parse(ReadLine());
+        }
+      }
+    }
+
+    public static void checarPrestamos()
+    {
+      using (var db = new AutoModel.bancoContext())
+      {
+        var gerente = new AutoModel.Gerente();
+        var query = db.Prestamos.Where(p => p.Activo == false && p.FechaPausa != null).ToList();
+
+        if (query.Count is 0)
+        {
+          // throw new Exception("No hay usuarios dados de baja");
+        }
+        else
+        {
+          foreach (var item in query)
+          {
+            if (DateOnly.FromDateTime(DateTime.Now) >= item.FechaPausa.Value.AddMonths(2))
+            {
+              gerente.ReanudarPrestamo(item.Id);
+            }
+          }
+        }
+      }
+    }
+
+    static void generarReportes()
+    {
+      int opcion;
+      bool banparse = false;
+      WriteLine("1.Reportes por dia \n2. Reporte por mes \n3. Reporte por usuario \n4. Reporte por tipo \n5. Reporte por ultima semana ");
+
+      do
+      {
+        banparse = int.TryParse(ReadLine(), out opcion);
+      } while (!banparse);
+
+      switch (opcion)
+      {
+        case 1: //Reportes por Dia
+          using (AutoModel.bancoContext db = new())
+          {
+            var queryinfo = db.SolicitudPrestamos.Where(e => e.Estatus == 2).Select(a => new
+            {
+              Sprestamo = a,
+              pertenece = a.Usuario.NombreUsuario,
+              idprestamo = a.PrestamoId,
+              iduser = a.UsuarioId,
+              fsolicitud = a.Prestamo.FechaSolicitud,
+              faprobacion = a.Prestamo.FechaAprobacion,
+
+            }
+            ).ToList().OrderBy(a => a.faprobacion);
+            //PARA RECORRER POR DIAS
+            var queryDIAS = db.Prestamos.Select(a => new
+            {
+              Prestamo = a,
+              diaxaprobasion = a.FechaAprobacion,
+            }
+            ).ToList().OrderBy(a => a.diaxaprobasion).DistinctBy(o => o.diaxaprobasion);
+
+
+            foreach (var item in queryDIAS)
+            {
+              WriteLine(item.diaxaprobasion);
+            }
+
+            foreach (var item in queryDIAS)
+            {
+              WriteLine($"Prestamos con fecha {item.diaxaprobasion}");
+              foreach (var itemXD in queryinfo)
+              {
+
+                if (itemXD.faprobacion == item.diaxaprobasion)
+                {
+
+                  WriteLine($" [No. Folio {itemXD.idprestamo}] [Fecha de aprobacion {itemXD.faprobacion}] [Fecha de solicitud {itemXD.fsolicitud}] [Prestamo de {itemXD.pertenece}] [Con id {itemXD.iduser}]");
+                  var ultimopago = db.Pagos.Where(a => a.PrestamoId == itemXD.idprestamo).OrderByDescending(o => o.Id).FirstOrDefault();
+                  if (ultimopago is null)
+                  { }
+                  else
+                  {
+                    WriteLine($" [Ultimo pago de: {ultimopago.Cantidad}] [El {ultimopago.Fecha}] ");
+                  }
+
+                }
+
+              }
+
+            }
+          }
+
+          break;
+
+        case 2:
+          using (AutoModel.bancoContext db = new())
+          {
+            var queryinfo = db.SolicitudPrestamos.Where(e => e.Estatus == 2).Select(a => new
+            {
+              Sprestamo = a,
+              pertenece = a.Usuario.NombreUsuario,
+              idprestamo = a.PrestamoId,
+              iduser = a.UsuarioId,
+              fsolicitud = a.Prestamo.FechaSolicitud,
+              faprobacion = a.Prestamo.FechaAprobacion
+
+            }
+                    ).ToList().OrderBy(a => a.faprobacion);
+
+            for (var i = 1; i <= 12; i++)
+            {
+              DateTime strDate = new DateTime(2000, i, 1);
+              WriteLine($"Prestamos en el mes {strDate.ToString("MMMM")}");
+
+              foreach (var item in queryinfo)
+              {
+                if (item.faprobacion.HasValue == true)
+                {
+
+                  if (item.faprobacion.Value.Month == i)
+                  {
+
+                    WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+                    var ultimopago = db.Pagos.Where(a => a.PrestamoId == item.idprestamo).OrderByDescending(o => o.Id).FirstOrDefault();
+                    if (ultimopago is null)
+                    { }
+                    else
+                    {
+                      WriteLine($" [Ultimo pago de: {ultimopago.Cantidad}] [El {ultimopago.Fecha}] ");
+                    }
+                  }
+                }
+              }
+            }
+
+
+          }
+
+
+
+          break;
+        case 3://POR usuario
+               //OBTENER NUMERO DE CUENTA
+          WriteLine("[Escribe el numero de cuenta del usuario con el que se quiere trabajar]");
+          var rid = ReadLine();
+
+          if (rid is null)
+          {
+            throw new Exception("No se ha ingresado un numero de cuenta");
+          }
+
+          long id = long.Parse(rid);
+
+          using (AutoModel.bancoContext db = new())
+          {
+            var UserID = db.Cuentas.Where(a => a.Id == id).FirstOrDefault();
+            id = (long)UserID.NCuentaUsuario;
+
+            if (UserID is null)
+            {
+              throw new Exception("[No se encontro el usuario]");
+            }
+            WriteLine($"[La id del usuario despite el numero de cuenta{id}]");
+            //ENLISTAR TODOS LOS PRESTAMOS DEL USUARIO
+            var queryinfo = db.SolicitudPrestamos.Where(e => e.Estatus == 2 && e.UsuarioId == id).Select(a => new
+            {
+              Sprestamo = a,
+              pertenece = a.Usuario.NombreUsuario,
+              idprestamo = a.PrestamoId,
+              iduser = a.UsuarioId,
+              fsolicitud = a.Prestamo.FechaSolicitud,
+              faprobacion = a.Prestamo.FechaAprobacion
+
+            }
+            ).ToList().OrderBy(a => a.faprobacion);
+
+            foreach (var item in queryinfo)
+            {
+              var ultimopago = db.Pagos.Where(a => a.PrestamoId == item.idprestamo).OrderByDescending(o => o.Id).FirstOrDefault();
+              WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+              if (ultimopago is null)
+              { }
+              else
+              {
+                WriteLine($" [Ultimo pago de: {ultimopago.Cantidad}] [El {ultimopago.Fecha}] ");
+              }
+            }
+
+
+          }
+
+          break;
+        case 4: //POR TIPO
+          using (AutoModel.bancoContext db = new())
+          {
+            var queryinfo = db.SolicitudPrestamos.Where(e => e.Estatus == 2).Select(a => new
+            {
+              Sprestamo = a,
+              pertenece = a.Usuario.NombreUsuario,
+              idprestamo = a.PrestamoId,
+              iduser = a.UsuarioId,
+              fsolicitud = a.Prestamo.FechaSolicitud,
+              faprobacion = a.Prestamo.FechaAprobacion,
+              meses = a.Prestamo.Meses
+
+            }
+                    ).ToList().OrderBy(a => a.meses);
+            //IMPRIMIR 6 MESES
+            WriteLine("[Prestamos de 6 meses]");
+            foreach (var item in queryinfo)
+            {
+              if (item.meses == 6)
+                WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+            }
+
+            //IMPRIMIR 12 MESES
+            WriteLine("[Prestamos de 12 meses]");
+            foreach (var item in queryinfo)
+            {
+              if (item.meses == 12)
+                WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+            }
+
+            WriteLine("[Prestamos de 24 meses]");
+            foreach (var item in queryinfo)
+            {
+              if (item.meses == 24)
+                WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+            }
+
+            WriteLine("[Prestamos de 36 meses]");
+            foreach (var item in queryinfo)
+            {
+              if (item.meses == 36)
+                WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+            }
+
+
+          }
+
+
+          break;
+        case 5:
+          using (AutoModel.bancoContext db = new())
+          {
+            var queryinfo = db.SolicitudPrestamos.Where(e => e.Estatus == 2).Select(a => new
+            {
+              Sprestamo = a,
+              pertenece = a.Usuario.NombreUsuario,
+              idprestamo = a.PrestamoId,
+              iduser = a.UsuarioId,
+              fsolicitud = a.Prestamo.FechaSolicitud,
+              faprobacion = a.Prestamo.FechaAprobacion,
+              meses = a.Prestamo.Meses
+
+            }
+                    ).ToList().OrderBy(a => a.meses);
+            var dateAndTime = DateTime.Now;
+            DateOnly aora = DateOnly.FromDateTime(dateAndTime);
+            WriteLine("[Prestamos realizados esta ultima semana]");
+            for (var i = 1; i <= 7; i++)
+            {
+              foreach (var item in queryinfo)
+              {
+                if (item.faprobacion == aora)
+                  WriteLine($" [No. Folio {item.idprestamo}] [Fecha de aprobacion {item.faprobacion}] [Fecha de solicitud {item.fsolicitud}] [Prestamo de {item.pertenece}] [Con id {item.iduser}]");
+              }
+              aora = aora.AddDays(-1);
+              //WriteLine(aora);
+            }
+
+          }
+          break;
+        default:
+          WriteLine("[Se ha elegido una opcion no existente]");
+          break;
+      }
+
+    }
+
+    public static void AddDayVacations()
+    {
+
+      try
+      {
+        using (var db = new AutoModel.bancoContext())
+        {
+          var gerente = db.Gerentes.ToList();
+
+          var time = DateTime.Now;
+
+          foreach (var item in gerente)
+          {
+            int diferenciaMeses = (DateOnly.FromDateTime(time).Month - item.FechaIncorporacion.Month);
+            int difereciaAnos = (DateOnly.FromDateTime(time).Year - item.FechaIncorporacion.Year);
+            if (difereciaAnos == 0)
+            {
+              if (diferenciaMeses > 0)
+              {
+                if (diferenciaMeses >= 10)
+                {
+                  item.DiasVaca = 10;
+                }
+                else
+                {
+                  item.DiasVaca = diferenciaMeses;
+                  if (item.DiasVaca < 0)
+                  {
+                    item.DiasVaca = 0;
+                  }
+                }
+              }
+              else
+              {
+                item.DiasVaca = 0;
+              }
+              if (item.DiasVaca is not null)
+              {
+                item.DiasVaca = item.DiasVaca - item.DiasVaca;
+                if (item.DiasVaca < 0)
+                {
+                  item.DiasVaca = 0;
+                }
+              }
+            }
+            else
+            {
+
+              if (item.UltimasVacaciones.Year < DateOnly.FromDateTime(time).Year)
+              {
+                item.DiasVaca = 0;
+              }
+
+              item.DiasVaca = time.Month;
+              if (item.DiasVaca > 10)
+              {
+                item.DiasVaca = 10;
+              }
+              if (item.DiasVaca is not null)
+              {
+                item.DiasVaca = item.DiasVaca - item.DiasVaca;
+                if (item.DiasVaca < 0)
+                {
+                  item.DiasVaca = 0;
+                }
+              }
+
+            }
+          }
+          db.SaveChanges();
+        }
+      }
+      catch (System.Exception ex)
+      {
+        throw (ex);
+      }
+
+    }
+
+    public static void pedirVacaciones(AutoModel.Gerente gerente)
+    {
+      bool flag = true;
+      do
+      {
+        try
+        {
+          using (var db = new AutoModel.bancoContext())
+          {
+            var time = DateTime.Now;
+            if (gerente.DiasVaca < 10)
+            {
+              Write("Dia de Vacacion:");
+              DateOnly vacacion_soli;
+              vacacion_soli = DateOnly.Parse(ReadLine());
+              if (vacacion_soli.Year == DateOnly.FromDateTime(time).Year)
+              {
+                flag = true;
+                if (gerente.DiasVaca > 0)
+                {
+                  if (vacacion_soli == gerente.UltimasVacaciones.AddDays(1))
+                  {
+                    if (gerente.DiasSeguidos < 4)
+                    {
+                      gerente.DiasSeguidos++;
+                      gerente.DiasVaca--;
+                      gerente.UltimasVacaciones = vacacion_soli;
+                      gerente.DiasVaca++;
+                      WriteLine("Vacaciones Solicitadas!");
+                      db.SaveChanges();
+                    }
+                    else
+                    {
+                      throw new Exception("Maximo De Dias Seguidos de vacaciones alcanzado..");
+                    }
+                  }
+                  else
+                  {
+                    gerente.DiasSeguidos = 1;
+                    gerente.DiasVaca--;
+                    gerente.UltimasVacaciones = vacacion_soli;
+                    gerente.DiasVaca++;
+                    WriteLine("Vacaciones Solicitadas!");
+                    db.SaveChanges();
+                  }
+
+                }
+                else
+                {
+                  throw new Exception("No dispones de dias de vacaciones aun...");
+                }
+              }
+              else
+              {
+                flag = false;
+                throw new Exception("Las Vacaciones no pueden ser de proximos años u anteriores al actual.");
+              }
+            }
+            else
+            {
+              flag = false;
+              throw new Exception("Maximo de Vacaciones Alcanzadas Espere Hasta el siguiente Año!");
+            }
+
+          }
+        }
+        catch (System.Exception ex)
+        {
+          flag = !flag;
+          WriteLine(ex);
+        }
+
+      } while (flag == false);
+
+    }
+    public static void addSaldoGerente(AutoModel.Gerente gerente)
+    {
+      WriteLine("\n\tAñadir saldo");
+      Write("Monto:");
+      var monto = decimal.Parse(ReadLine());
+      var rSaldo = gerente.AddSaldo(gerente.Id, monto);
+      WriteLine("Saldo actualizado");
     }
   }
 }

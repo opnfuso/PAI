@@ -17,7 +17,8 @@ namespace P9
           WriteLine("1.Pedir préstamo");
           WriteLine("2.Ver historial de pagos");
           WriteLine("3.Ver préstamo activo");
-          WriteLine("4.Salir");
+          WriteLine("4.Añadir saldo");
+          WriteLine("5.Salir");
           Write("Ingrese una opción: ");
           string? opcion = ReadLine();
 
@@ -37,8 +38,11 @@ namespace P9
             case "3":
               verPrestamoActivo(usuario);
               break;
-
             case "4":
+              addSaldo(usuario);
+              break;
+
+            case "5":
               salir = true;
               break;
             default:
@@ -160,6 +164,13 @@ namespace P9
 
       var rPrestamo = prestamo.Create(usuario.Id, usuario.Saldo, monto, meses);
     }
-
+    public static void addSaldo(AutoModel.Usuario usuario)
+    {
+      WriteLine("\n\tAñadir saldo");
+      Write("Monto:");
+      var monto = decimal.Parse(ReadLine());
+      var rSaldo = usuario.AddSaldo(usuario.Id, monto);
+      WriteLine("Saldo actualizado");
+    }
   }
 }
