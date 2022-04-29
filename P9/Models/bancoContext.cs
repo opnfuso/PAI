@@ -312,11 +312,16 @@ namespace P9.AutoModel
         entity.Property(e => e.PersonaId).HasColumnName("persona_id");
 
         entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
+        entity.Property(e => e.GerenteId).HasColumnName("gerente_id");
 
         entity.HasOne(d => d.Persona)
                   .WithMany(p => p.Solicituds)
                   .HasForeignKey(d => d.PersonaId)
                   .OnDelete(DeleteBehavior.ClientSetNull);
+
+        entity.HasOne(d => d.Gerente)
+        .WithMany(p => p.Solicituds)
+        .HasForeignKey(d => d.GerenteId);
 
         entity.HasOne(d => d.Usuario)
                   .WithMany(p => p.Solicituds)

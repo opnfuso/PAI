@@ -317,7 +317,7 @@ namespace P9
                   db.SaveChanges();
 
                   var user = new AutoModel.Usuario();
-                  var rUser = user.Create(id, datos.persona.PrimerNombre, datos.persona.PrimerApellido, datos.persona.SegundoApellido, datos.persona.FechaNacimiento);
+                  var rUser = user.Create(id, datos.persona.PrimerNombre, datos.persona.PrimerApellido, datos.persona.SegundoApellido, datos.persona.FechaNacimiento, gerente.Id);
                   if (rUser is Exception)
                   {
                     throw (Exception)rUser;

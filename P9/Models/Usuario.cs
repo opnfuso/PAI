@@ -105,7 +105,7 @@ namespace P9.AutoModel
       }
     }
 
-    public object Create(int id_Persona, string Pname, string Pap, string Sap, DateOnly bornday)
+    public object Create(int id_Persona, string Pname, string Pap, string Sap, DateOnly bornday, int gid)
     {
       using (var db = new bancoContext())
       {
@@ -128,6 +128,7 @@ namespace P9.AutoModel
         #endregion
         var person = db.Solicituds.Where(u => u.PersonaId == id_Persona).FirstOrDefault();
         person.UsuarioId = id_u;
+        person.GerenteId = gid;
         user.Id = id_u;
         db.Usuarios.Add(user);
         db.SaveChanges();

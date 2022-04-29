@@ -46,7 +46,7 @@ namespace P9
               if (rGerente is AutoModel.Gerente)
               {
                 WriteLine("\n\tBienvenido Gerente");
-                manager(gerente);
+                manager((AutoModel.Gerente)rGerente);
               }
 
               break;
