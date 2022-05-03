@@ -147,7 +147,7 @@ namespace P9.AutoModel
         var soli = new Solicitud()
         {
           PersonaId = persona.Id,
-          Estatus = 1
+          Estatus = 3
         };
 
         db.Solicituds.Add(soli);
