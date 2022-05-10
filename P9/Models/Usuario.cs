@@ -135,7 +135,7 @@ namespace P9.AutoModel
 
         var cuenta = new AutoModel.Cuenta();
         cuenta.NCuentaUsuario = id_u;
-        cuenta.Tipo = 1;
+        cuenta.Tipo = 3;
         db.Cuentas.Add(cuenta);
         db.SaveChanges();
 
