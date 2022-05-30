@@ -18,9 +18,9 @@ namespace P11
     public string? SegundoNombre { get; set; }
     public string PrimerApellido { get; set; } = null!;
     public string SegundoApellido { get; set; } = null!;
-    public DateOnly FechaNacimiento { get; set; }
-    public DateOnly FechaIncorporacion { get; set; }
-    public DateOnly UltimasVacaciones { get; set; }
+    public DateTime FechaNacimiento { get; set; }
+    public DateTime FechaIncorporacion { get; set; }
+    public DateTime UltimasVacaciones { get; set; }
     public string Password { get; set; } = null!;
     public int? DiasVaca { get; set; }
     public int? DiasSeguidos { get; set; }
@@ -46,7 +46,7 @@ namespace P11
       }
     }
 
-    public object Create(string Pa, string Sa, string Pn, string Sn, string pass, DateOnly nacimiento)
+    public object Create(string Pa, string Sa, string Pn, string Sn, string pass, DateTime nacimiento)
     {
       using (var db = new bancoContext())
       {
@@ -109,7 +109,7 @@ namespace P11
         gerente.PrimerApellido = Pa;
         gerente.SegundoApellido = Sa;
         gerente.Password = pass;
-        gerente.FechaIncorporacion = DateOnly.FromDateTime(DateTime.Now);
+        gerente.FechaIncorporacion = DateTime.Now;
         gerente.FechaNacimiento = nacimiento;
 
         db.Gerentes.Add(gerente);
@@ -160,14 +160,14 @@ namespace P11
           return new Exception("No estas en el ultimo pago");
         }
 
-        if (prestamo.FechaSolicitud.AddDays(2) > DateOnly.FromDateTime(DateTime.Now))
+        if (prestamo.FechaSolicitud.AddDays(2) > DateTime.Now)
         {
           return new Exception("No se puede aceptar el prestamo antes de 2 días");
         }
 
         solicitud.Estatus = 2;
-        prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
-        prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
+        prestamo.FechaAprobacion = DateTime.Now;
+        prestamo.FechaLiquidacion = DateTime.Now.AddMonths(prestamo.Meses);
         prestamo.Activo = true;
 
         for (int i = 0; i < prestamo.Meses; i++)
@@ -177,7 +177,7 @@ namespace P11
             PrestamoId = prestamo.Id,
             UsuarioId = prestamo.UsuarioId,
             Cantidad = prestamo.PagoMes / prestamo.Meses,
-            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+            Fecha = DateTime.Now.AddMonths(i + 1)
           };
 
           db.Pagos.Add(pago);
@@ -231,9 +231,9 @@ namespace P11
         prestamo.Meses = meses;
         prestamo.Cantidad = cantidad;
         prestamo.GerenteId = gerente.Id;
-        prestamo.FechaSolicitud = DateOnly.FromDateTime(DateTime.Now);
-        prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now); ;
-        prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(meses));
+        prestamo.FechaSolicitud = DateTime.Now;
+        prestamo.FechaAprobacion = DateTime.Now; ;
+        prestamo.FechaLiquidacion = DateTime.Now.AddMonths(meses);
         prestamo.Activo = true;
         prestamo.Interes = 10.2m;
         prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
@@ -245,7 +245,7 @@ namespace P11
             PrestamoId = prestamo.Id,
             UsuarioId = prestamo.UsuarioId,
             Cantidad = prestamo.PagoMes / prestamo.Meses,
-            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+            Fecha = DateTime.Now.AddMonths(i + 1)
           };
 
           db.Pagos.Add(pago);
@@ -289,14 +289,14 @@ namespace P11
 
         foreach (var item in prestamos)
         {
-          if (DateOnly.FromDateTime(DateTime.Now) < item.FechaAprobacion.Value.AddMonths(6))
+          if (DateTime.Now < item.FechaAprobacion.Value.AddMonths(6))
           {
             return new Exception("No se puede dar de baja el usuario, el ultimo registro debe ser mayor a 6 meses");
           }
         }
 
         usuario.Activo = false;
-        usuario.FechaBaja = DateOnly.FromDateTime(DateTime.Now);
+        usuario.FechaBaja = DateTime.Now;
         db.SaveChanges();
         return usuario;
       }
@@ -314,7 +314,7 @@ namespace P11
         }
 
         prestamo.Activo = false;
-        prestamo.FechaPausa = DateOnly.FromDateTime(DateTime.Now);
+        prestamo.FechaPausa = DateTime.Now;
         db.SaveChanges();
         return prestamo;
       }
@@ -339,7 +339,7 @@ namespace P11
 
         foreach (var pago in pagos)
         {
-          var diff = DateTime.Now.Subtract(pago.Fecha.ToDateTime(TimeOnly.Parse("00:00:00 AM")));
+          var diff = DateTime.Now.Subtract(pago.Fecha);
           var presta = db.Prestamos.Where(p => p.Id == pago.PrestamoId).FirstOrDefault();
 
           if (presta is null)
@@ -347,9 +347,9 @@ namespace P11
             return new Exception("Prestamo no existente");
           }
 
-          pago.Fecha = DateOnly.FromDateTime(pago.Fecha.ToDateTime(TimeOnly.Parse("00:00:00 AM")).AddDays(diff.Days));
+          pago.Fecha = pago.Fecha.AddDays(diff.Days);
 
-          presta.FechaLiquidacion = DateOnly.FromDateTime(presta.FechaLiquidacion.Value.ToDateTime(TimeOnly.Parse("00:00:00 AM")).AddDays(diff.Days));
+          presta.FechaLiquidacion = presta.FechaLiquidacion.Value.AddDays(diff.Days);
         }
 
         prestamo.Activo = true;

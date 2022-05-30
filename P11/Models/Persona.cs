@@ -15,13 +15,35 @@ namespace P11
     public string? SegundoNombre { get; set; }
     public string PrimerApellido { get; set; } = null!;
     public string SegundoApellido { get; set; } = null!;
-    public DateOnly FechaNacimiento { get; set; }
+    public DateTime FechaNacimiento { get; set; }
     public string Curp { get; set; } = null!;
 
     public virtual Usuario Usuario { get; set; } = null!;
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 
-    public bool CURPValidator(string curp, string Pname, string Pap, string Sap, DateOnly bornday)
+    public object GetAll()
+    {
+      using (var db = new bancoContext())
+      {
+        return db.Personas.ToList();
+      }
+    }
+
+    public object Get(long id)
+    {
+      using (var db = new bancoContext())
+      {
+        var persona = db.Personas.Find(id);
+        if (persona == null)
+        {
+          return null;
+        }
+
+        return persona;
+      }
+    }
+
+    public bool CURPValidator(string curp, string Pname, string Pap, string Sap, DateTime bornday)
     {
       string fecha = bornday.ToString("yyMMdd");
       bool flag = false;
@@ -74,8 +96,7 @@ namespace P11
       char[] vocales = { 'A', 'a', 'I', 'i', 'U', 'u', 'E', 'e', 'O', 'o' };
       return vocales.Contains(vocal);
     }
-
-    public object Create(string Pn, string Sn, string Pa, string Sa, DateOnly bornday, string curp)
+    public object Create(string Pn, string Sn, string Pa, string Sa, DateTime bornday, string curp)
     {
       using (var db = new bancoContext())
       {

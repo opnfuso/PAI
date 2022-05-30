@@ -19,12 +19,12 @@ namespace P11
     public decimal Cantidad { get; set; }
     public decimal Interes { get; set; }
     public decimal PagoMes { get; set; }
-    public DateOnly FechaSolicitud { get; set; }
-    public DateOnly? FechaAprobacion { get; set; } = null!;
-    public DateOnly? FechaLiquidacion { get; set; } = null!;
+    public DateTime FechaSolicitud { get; set; }
+    public DateTime? FechaAprobacion { get; set; } = null!;
+    public DateTime? FechaLiquidacion { get; set; } = null!;
     public bool Activo { get; set; }
 
-    public DateOnly? FechaPausa { get; set; } = null!;
+    public DateTime? FechaPausa { get; set; } = null!;
 
     public virtual Empleado? Empleado { get; set; }
     public virtual Gerente? Gerente { get; set; }
@@ -81,7 +81,7 @@ namespace P11
         prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
 
         var time = DateTime.Now;
-        prestamo.FechaSolicitud = DateOnly.FromDateTime(time);
+        prestamo.FechaSolicitud = time;
 
         prestamo.FechaLiquidacion = prestamo.FechaSolicitud.AddMonths(prestamo.Meses);
 

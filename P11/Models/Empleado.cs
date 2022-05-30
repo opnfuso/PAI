@@ -15,7 +15,7 @@ namespace P11
     public string? SegundoNombre { get; set; }
     public string PrimerApellido { get; set; } = null!;
     public string SegundoApellido { get; set; } = null!;
-    public DateOnly FechaNacimiento { get; set; }
+    public DateTime FechaNacimiento { get; set; }
     public bool Activo { get; set; }
     public string Password { get; set; } = null!;
 
@@ -73,7 +73,7 @@ namespace P11
           return new Exception("No estas en el ultimo pago");
         }
 
-        if (prestamo.FechaSolicitud.AddDays(2) < DateOnly.FromDateTime(DateTime.Now))
+        if (prestamo.FechaSolicitud.AddDays(2) < DateTime.Now)
         {
           solicitud.Estatus = 3;
           db.SaveChanges();
@@ -81,8 +81,8 @@ namespace P11
         }
 
         solicitud.Estatus = 2;
-        prestamo.FechaAprobacion = DateOnly.FromDateTime(DateTime.Now);
-        prestamo.FechaLiquidacion = DateOnly.FromDateTime(DateTime.Now.AddMonths(prestamo.Meses));
+        prestamo.FechaAprobacion = DateTime.Now;
+        prestamo.FechaLiquidacion = DateTime.Now.AddMonths(prestamo.Meses);
         prestamo.Activo = true;
 
         for (int i = 0; i < prestamo.Meses; i++)
@@ -92,7 +92,7 @@ namespace P11
             PrestamoId = prestamo.Id,
             UsuarioId = prestamo.UsuarioId,
             Cantidad = prestamo.PagoMes / prestamo.Meses,
-            Fecha = DateOnly.FromDateTime(DateTime.Now.AddMonths(i + 1))
+            Fecha = DateTime.Now.AddMonths(i + 1)
           };
 
           db.Pagos.Add(pago);
@@ -165,7 +165,7 @@ namespace P11
       }
     }
 
-    public object Create(string Pn, string? Sn, string Pa, string Sa, DateOnly nacimiento, string pass)
+    public object Create(string Pn, string? Sn, string Pa, string Sa, DateTime nacimiento, string pass)
     {
       using (var db = new bancoContext())
       {

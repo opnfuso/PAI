@@ -23,7 +23,7 @@ namespace P11
     public int Intentos { get; set; }
     public DateTime? TiempoBloqueo { get; set; }
 
-    public DateOnly? FechaBaja { get; set; }
+    public DateTime? FechaBaja { get; set; }
 
     public virtual Persona Persona { get; set; } = null!;
     public virtual ICollection<Cuenta> Cuenta { get; set; }
@@ -31,6 +31,28 @@ namespace P11
     public virtual ICollection<Prestamo> Prestamos { get; set; }
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
+
+    public object GetAll()
+    {
+      using (var db = new bancoContext())
+      {
+        return db.Usuarios.ToList();
+      }
+    }
+
+    public object Get(long id)
+    {
+      using (var db = new bancoContext())
+      {
+        var usuario = db.Usuarios.Find(id);
+        if (usuario == null)
+        {
+          return null;
+        }
+
+        return usuario;
+      }
+    }
 
     public object login(long id, string pass)
     {
@@ -75,22 +97,22 @@ namespace P11
       }
     }
 
-    public object verPrestamoActivo(Usuario user)
+    public object PrestamoActivo(long id)
     {
       using (var db = new bancoContext())
       {
-        var prestamo = db.Prestamos.Where(p => p.UsuarioId == user.Id && p.Activo == true).FirstOrDefault();
+        var prestamo = db.Prestamos.Where(p => p.UsuarioId == id && p.Activo == true).FirstOrDefault();
 
         if (prestamo == null)
         {
-          return new Exception("No tiene prestamos activos");
+          return null;
         }
 
         return prestamo;
       }
     }
 
-    public object verHistorial(long id)
+    public object Historial(long id)
     {
       using (var db = new bancoContext())
       {
@@ -98,7 +120,7 @@ namespace P11
 
         if (pagos.Count == 0)
         {
-          return new Exception("No tiene pagos");
+          return null;
         }
 
         return pagos;

@@ -6,20 +6,72 @@ namespace P11.Controllers;
 [Route("api/[controller]")]
 public class UsuarioController : ControllerBase
 {
-    private readonly ILogger<UsuarioController> _logger;
+  //   private readonly ILogger<UsuarioController> _logger;
 
-    public UsuarioController(ILogger<UsuarioController> logger)
+  //   public UsuarioController(ILogger<UsuarioController> logger)
+  //   {
+  //     _logger = logger;
+  //   }
+
+  #region Get
+  [HttpGet(Name = "GetAllUsers")]
+  public IActionResult GetAllUsers()
+  {
+    var users = new Usuario().GetAll();
+
+    if (users == null)
     {
-        _logger = logger;
+      return StatusCode(500);
     }
 
-    [HttpGet(Name = "GetUsuario")]
-    public IEnumerable<Usuario> Get()
+    return Ok(users);
+  }
+
+  [HttpGet("{id}", Name = "GetUsuario")]
+  public IActionResult Get(long id)
+  {
+    var user = new Usuario().Get(id);
+
+    if (user == null)
     {
-        return Enumerable.Range(1, 5).Select(index => new Usuario
-        {
-            NombreUsuario = $"Usuario {index}",
-        })
-        .ToArray();
+      return NotFound();
     }
+    return Ok(user);
+  }
+
+  [HttpGet("{id}/prestamo", Name = "GetPrestamoActivo")]
+  public IActionResult GetPrestamoActivo(long id)
+  {
+    var prestamo = new Usuario().PrestamoActivo(id);
+
+    if (prestamo == null)
+    {
+      var res = new
+      {
+        message = "No tiene prestamos activos",
+      };
+      return NotFound(res);
+    }
+
+    return Ok(prestamo);
+  }
+
+  [HttpGet("{id}/historial", Name = "GetHistorial")]
+  public IActionResult GetHistorial(long id)
+  {
+    var prestamo = new Usuario().Historial(id);
+
+    if (prestamo == null)
+    {
+      var res = new
+      {
+        message = "No tiene pagos",
+      };
+
+      return NotFound(res);
+    }
+
+    return Ok(prestamo);
+  }
+  #endregion
 }
