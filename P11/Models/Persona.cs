@@ -29,7 +29,7 @@ namespace P11
       }
     }
 
-    public object Get(long id)
+    public object Get(int id)
     {
       using (var db = new bancoContext())
       {

@@ -23,6 +23,28 @@ namespace P11
 
     public virtual ICollection<Cuenta> Cuenta { get; set; }
 
+    public object GetAll()
+    {
+      using (var db = new bancoContext())
+      {
+        return db.Empleados.ToList();
+      }
+    }
+
+    public object Get(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var empleado = db.Empleados.Find(id);
+        if (empleado == null)
+        {
+          return null;
+        }
+
+        return empleado;
+      }
+    }
+
     public object login(int user, string pass)
     {
       using (var db = new bancoContext())

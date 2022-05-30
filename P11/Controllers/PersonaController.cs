@@ -21,7 +21,7 @@ public class PersonaController : ControllerBase
   }
 
   [HttpGet("{id}", Name = "GetPersona")]
-  public IActionResult Get(long id)
+  public IActionResult Get(int id)
   {
     var persona = new Persona().Get(id);
 

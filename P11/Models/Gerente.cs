@@ -31,6 +31,27 @@ namespace P11
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 
+    public object GetAll()
+    {
+      using (var db = new bancoContext())
+      {
+        return db.Gerentes.ToList();
+      }
+    }
+
+    public object Get(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var gerente = db.Gerentes.Find(id);
+        if (gerente == null)
+        {
+          return null;
+        }
+
+        return gerente;
+      }
+    }
     public object login(int user, string pass)
     {
       using (var db = new bancoContext())
