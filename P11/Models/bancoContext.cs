@@ -87,7 +87,7 @@ namespace P11
                   .HasColumnType("DATE")
                   .HasColumnName("fecha_nacimiento");
 
-        entity.Property(e => e.Password).HasColumnName("password");
+        // entity.Property(e => e.Password).HasColumnName("password");
 
         entity.Property(e => e.PrimerApellido)
                   .HasColumnType("VARCHAR (30)")

@@ -7,6 +7,7 @@ namespace P11.Controllers;
 
 public class EmpleadoController : ControllerBase
 {
+  #region Get
   [HttpGet(Name = "GetAllEmpleados")]
   public IActionResult GetAllEmpleados()
   {
@@ -35,7 +36,7 @@ public class EmpleadoController : ControllerBase
   [HttpGet("{id}/prestamos", Name = "GetAllPrestamos")]
   public IActionResult GetAllPrestamos(int id)
   {
-    var empleados = new Empleado().UltimosPrestamos(id);
+    var empleados = new EmpleadoFunctions().UltimosPrestamos(id);
 
     if (empleados == null)
     {
@@ -48,7 +49,7 @@ public class EmpleadoController : ControllerBase
   [HttpGet("{id}/prestamo", Name = "GetPrestamo")]
   public IActionResult GetPrestamo(int id)
   {
-    var empleado = new Empleado().UltimoPrestamo(id);
+    var empleado = new EmpleadoFunctions().UltimoPrestamo(id);
 
     if (empleado == null)
     {
@@ -56,4 +57,31 @@ public class EmpleadoController : ControllerBase
     }
     return Ok(empleado);
   }
+  #endregion
+
+  #region Post
+  [HttpPost(Name = "CreateEmpleado")]
+  public IActionResult Create([FromBody] EmpleadoCreate empleado)
+  {
+    if (empleado == null)
+    {
+      return BadRequest();
+    }
+
+    if(!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+    Empleado newEmpleado = new EmpleadoCreate().Create(empleado);
+
+
+    if (newEmpleado.Id == 0)
+    {
+      return StatusCode(500);
+    }
+
+    return CreatedAtRoute("GetEmpleado", new { id = newEmpleado.Id }, empleado);
+  }
+  #endregion
 }
