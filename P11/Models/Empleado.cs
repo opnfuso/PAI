@@ -20,7 +20,7 @@ namespace P11
     public bool Activo { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
 
-    public virtual ICollection<Cuenta> Cuenta { get; set; }
+    // public virtual ICollection<Cuenta> Cuenta { get; set; }
 
     public object GetAll()
     {
@@ -39,6 +39,23 @@ namespace P11
         {
           return null;
         }
+
+        return empleado;
+      }
+    }
+
+    public object Delete(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var empleado = db.Empleados.Find(id);
+        if (empleado == null)
+        {
+          return null;
+        }
+
+        empleado.Activo = false;
+        db.SaveChanges();
 
         return empleado;
       }
@@ -99,10 +116,51 @@ namespace P11
         db.Empleados.Add(empleado);
         db.SaveChanges();
 
-        var cuenta = new Cuenta();
-        cuenta.NCuentaEmpleado = empleado.Id;
-        cuenta.Tipo = 2;
-        db.Cuentas.Add(cuenta);
+        // var cuenta = new Cuenta();
+        // cuenta.NCuentaEmpleado = empleado.Id;
+        // cuenta.Tipo = 2;
+        // db.Cuentas.Add(cuenta);
+        // db.SaveChanges();
+
+        return empleado;
+      }
+    }
+  }
+
+  public class EmpleadoUpdate
+  {
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerNombre { get; set; }
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoNombre { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerApellido { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoApellido { get; set; }
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime FechaNacimiento { get; set; }
+
+    public Empleado Update(int Id, EmpleadoUpdate empleadoUpdate)
+    {
+      var Pn = empleadoUpdate.PrimerNombre;
+      var Sn = empleadoUpdate.SegundoNombre;
+      var Pa = empleadoUpdate.PrimerApellido;
+      var Sa = empleadoUpdate.SegundoApellido;
+      var nacimiento = empleadoUpdate.FechaNacimiento;
+      using (var db = new bancoContext())
+      {
+        var empleado = db.Empleados.Find(Id);
+
+        empleado.PrimerNombre = Pn;
+        empleado.SegundoNombre = Sn;
+        empleado.PrimerApellido = Pa;
+        empleado.SegundoApellido = Sa;
+        empleado.FechaNacimiento = nacimiento;
+
         db.SaveChanges();
 
         return empleado;

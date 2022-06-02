@@ -10,7 +10,7 @@ namespace P11
       Prestamos = new HashSet<Prestamo>();
       Solicituds = new HashSet<Solicitud>();
       Pagos = new HashSet<Pago>();
-      Cuenta = new HashSet<Cuenta>();
+      // Cuenta = new HashSet<Cuenta>();
     }
 
     public int Id { get; set; }
@@ -26,7 +26,7 @@ namespace P11
     public int? DiasSeguidos { get; set; }
     public decimal Saldo { get; set; }
 
-    public virtual ICollection<Cuenta> Cuenta { get; set; }
+    // public virtual ICollection<Cuenta> Cuenta { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<Solicitud> Solicituds { get; set; }
@@ -136,11 +136,11 @@ namespace P11
         db.Gerentes.Add(gerente);
         db.SaveChanges();
 
-        var cuenta = new Cuenta();
-        cuenta.NCuentaGerente = gerente.Id;
-        cuenta.Tipo = 1;
-        db.Cuentas.Add(cuenta);
-        db.SaveChanges();
+        // var cuenta = new Cuenta();
+        // cuenta.NCuentaGerente = gerente.Id;
+        // cuenta.Tipo = 1;
+        // db.Cuentas.Add(cuenta);
+        // db.SaveChanges();
 
         return gerente;
       }
@@ -231,10 +231,10 @@ namespace P11
       using (var db = new bancoContext())
       {
         var gerente = db.Gerentes.Where(g => g.Id == gid).FirstOrDefault();
-        var cuenta = db.Cuentas.Where(c => c.NCuentaGerente == gid).FirstOrDefault();
+        // var cuenta = db.Cuentas.Where(c => c.NCuentaGerente == gid).FirstOrDefault();
         var prestamo = new Prestamo();
 
-        if (gerente == null || cuenta == null)
+        if (gerente == null)
         {
           return new Exception("Gerente o cuenta no existente");
         }

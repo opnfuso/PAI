@@ -26,7 +26,7 @@ namespace P11
     public DateTime? FechaBaja { get; set; }
 
     public virtual Persona Persona { get; set; } = null!;
-    public virtual ICollection<Cuenta> Cuenta { get; set; }
+    // public virtual ICollection<Cuenta> Cuenta { get; set; }
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<Prestamo> Prestamos { get; set; }
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }
@@ -155,11 +155,11 @@ namespace P11
         db.Usuarios.Add(user);
         db.SaveChanges();
 
-        var cuenta = new Cuenta();
-        cuenta.NCuentaUsuario = id_u;
-        cuenta.Tipo = 3;
-        db.Cuentas.Add(cuenta);
-        db.SaveChanges();
+        // var cuenta = new Cuenta();
+        // cuenta.NCuentaUsuario = id_u;
+        // cuenta.Tipo = 3;
+        // db.Cuentas.Add(cuenta);
+        // db.SaveChanges();
 
         return user;
       }

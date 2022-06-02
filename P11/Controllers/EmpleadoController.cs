@@ -59,7 +59,6 @@ public class EmpleadoController : ControllerBase
   }
   #endregion
 
-  #region Post
   [HttpPost(Name = "CreateEmpleado")]
   public IActionResult Create([FromBody] EmpleadoCreate empleado)
   {
@@ -68,7 +67,7 @@ public class EmpleadoController : ControllerBase
       return BadRequest();
     }
 
-    if(!ModelState.IsValid)
+    if (!ModelState.IsValid)
     {
       return BadRequest(ModelState);
     }
@@ -81,7 +80,49 @@ public class EmpleadoController : ControllerBase
       return StatusCode(500);
     }
 
-    return CreatedAtRoute("GetEmpleado", new { id = newEmpleado.Id }, empleado);
+    return CreatedAtRoute("GetEmpleado", new { id = newEmpleado.Id }, newEmpleado);
   }
-  #endregion
+
+  [HttpPut("{id}", Name = "UpdateEmpleado")]
+  public IActionResult Update(int id, [FromBody] EmpleadoUpdate empleado)
+  {
+    if (empleado == null)
+    {
+      return BadRequest();
+    }
+
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+    Empleado newEmpleado = new EmpleadoUpdate().Update(id, empleado);
+
+    if (newEmpleado == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(newEmpleado);
+  }
+
+  [HttpDelete("{id}", Name = "DeleteEmpleado")]
+  public IActionResult Delete(int id)
+  {
+    var empleado = new Empleado().Get(id);
+
+    if (empleado == null)
+    {
+      return NotFound();
+    }
+
+    var deleted = new Empleado().Delete(id);
+
+    if (deleted == null)
+    {
+      return StatusCode(500);
+    }
+
+    return StatusCode(200, deleted);
+  }
 }
