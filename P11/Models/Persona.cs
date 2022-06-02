@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace P11
 {
   public partial class Persona
@@ -43,59 +43,10 @@ namespace P11
       }
     }
 
-    public bool CURPValidator(string curp, string Pname, string Pap, string Sap, DateTime bornday)
-    {
-      string fecha = bornday.ToString("yyMMdd");
-      bool flag = false;
-      bool vocal = false;
-      string voc = "1";
-      if (curp[0] == Pap[0])
-      {
-        flag = true;
-        for (int i = 1; i < Pap.Length; i++)
-        {
-          if (IsVocal(Pap[i]) && vocal == false)
-          {
-            vocal = true;
-            voc = Pap[i].ToString().ToUpper();
-          }
-        }
-        if (curp[1].ToString() == voc)
-        {
-          if (curp[2] == Sap[0])
-          {
-            if (curp[3] == Pname[0])
-            {
-              for (int i = 0; i < fecha.Length; i++)
-              {
-                if (!(curp[i + 4] == fecha[i]))
-                {
-                  flag = false;
-                }
-              }
-            }
-            else
-            {
-              flag = false;
-            }
-          }
-          else
-          {
-            flag = false;
-          }
-        }
-        else
-        {
-          flag = false;
-        }
-      }
-      return flag;
-    }
-    public bool IsVocal(char vocal)
-    {
-      char[] vocales = { 'A', 'a', 'I', 'i', 'U', 'u', 'E', 'e', 'O', 'o' };
-      return vocales.Contains(vocal);
-    }
+    // public bool CURPValidator(string curp, string Pname, string Pap, string Sap, DateTime bornday)
+    // {
+      
+    // }
     public object Create(string Pn, string Sn, string Pa, string Sa, DateTime bornday, string curp)
     {
       using (var db = new bancoContext())
@@ -157,11 +108,11 @@ namespace P11
         }
 
         persona.Curp = curp;
-        bool flag2 = CURPValidator(persona.Curp, persona.PrimerNombre, persona.PrimerApellido, persona.SegundoApellido, persona.FechaNacimiento);
-        if (flag2 == false)
-        {
-          return new Exception("El CURP No coincide con los datos anteriormente agregados.");
-        }
+        // bool flag2 = CURPValidator(persona.Curp, persona.PrimerNombre, persona.PrimerApellido, persona.SegundoApellido, persona.FechaNacimiento);
+        // if (flag2 == false)
+        // {
+        //   return new Exception("El CURP No coincide con los datos anteriormente agregados.");
+        // }
         db.Personas.Add(persona);
         db.SaveChanges();
 
@@ -177,5 +128,26 @@ namespace P11
         return persona;
       }
     }
+  }
+
+  public class PersonaCreate
+  {
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string PrimerNombre { get; set; } = null!;
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoNombre { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string PrimerApellido { get; set; } = null!;
+    [Required]
+    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    public string SegundoApellido { get; set; } = null!;
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime FechaNacimiento { get; set; }
+    [Required]
+    [CustomValidation(typeof(Persona), "CURPValidator")]
+    public string Curp { get; set; } = null!;
   }
 }
