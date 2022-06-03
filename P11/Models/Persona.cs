@@ -18,7 +18,7 @@ namespace P11
     public DateTime FechaNacimiento { get; set; }
     public string Curp { get; set; } = null!;
 
-    public virtual Usuario Usuario { get; set; } = null!;
+    // public virtual Usuario Usuario { get; set; } = null!;
     public virtual ICollection<Solicitud> Solicituds { get; set; }
 
     public object GetAll()
@@ -45,7 +45,7 @@ namespace P11
 
     // public bool CURPValidator(string curp, string Pname, string Pap, string Sap, DateTime bornday)
     // {
-      
+
     // }
     public object Create(string Pn, string Sn, string Pa, string Sa, DateTime bornday, string curp)
     {
@@ -133,21 +133,48 @@ namespace P11
   public class PersonaCreate
   {
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string PrimerNombre { get; set; } = null!;
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string? SegundoNombre { get; set; }
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string PrimerApellido { get; set; } = null!;
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string SegundoApellido { get; set; } = null!;
     [Required]
     [DataType(DataType.Date)]
     public DateTime FechaNacimiento { get; set; }
     [Required]
-    [CustomValidation(typeof(Persona), "CURPValidator")]
+    [StringLength(10, MinimumLength = 10, ErrorMessage = "El CURP debe tener al menos 10 caracteres")]
     public string Curp { get; set; } = null!;
+
+    public Persona Create(PersonaCreate personaCreate)
+    {
+      string Pn = personaCreate.PrimerNombre;
+      string Sn = personaCreate.SegundoNombre;
+      string Pa = personaCreate.PrimerApellido;
+      string Sa = personaCreate.SegundoApellido;
+      DateTime nacimiento = personaCreate.FechaNacimiento;
+      string curp = personaCreate.Curp;
+
+      using (var db = new bancoContext())
+      {
+        var persona = new Persona();
+
+        persona.PrimerNombre = Pn;
+        persona.SegundoNombre = Sn;
+        persona.PrimerApellido = Pa;
+        persona.SegundoApellido = Sa;
+        persona.FechaNacimiento = nacimiento;
+        persona.Curp = curp;
+
+        db.Personas.Add(persona);
+        db.SaveChanges();
+
+        return persona;
+      }
+    }
   }
 }

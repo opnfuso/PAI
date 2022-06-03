@@ -403,10 +403,10 @@ namespace P11
                   .HasColumnType("DATE")
                   .HasColumnName("tiempo_bloqueo");
 
-        entity.HasOne(d => d.Persona)
-                  .WithOne(p => p.Usuario)
-                  .HasForeignKey<Usuario>(d => d.PersonaId)
-                  .OnDelete(DeleteBehavior.ClientSetNull);
+        // entity.HasOne(d => d.Persona)
+        //           .WithOne(p => p.Usuario)
+        //           .HasForeignKey<Usuario>(d => d.PersonaId)
+        //           .OnDelete(DeleteBehavior.ClientSetNull);
       });
 
       OnModelCreatingPartial(modelBuilder);

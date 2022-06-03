@@ -32,66 +32,41 @@ public class PersonaController : ControllerBase
     return Ok(persona);
   }
 
-  [AcceptVerbs("POST", "PUT")]
-  public IActionResult VerifyCURP(string CURP, string Pn, string Pa, string Sa, DateTime Nacimiento)
+  [HttpPost(Name = "CreatePersona")]
+  public IActionResult Create([FromBody] PersonaCreate persona)
   {
-    string fecha = Nacimiento.ToString("yyMMdd");
-      bool flag = false;
-      bool vocal = false;
-      string voc = "1";
-      if (CURP[0] == Pa[0])
+    if (persona == null)
+    {
+      return BadRequest();
+    }
+
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+    var PersonaValidations = new PersonaValidations();
+
+    bool curp = PersonaValidations.VerifyCURP(persona.Curp, persona.PrimerNombre, persona.PrimerApellido, persona.SegundoApellido, persona.FechaNacimiento);
+
+    if (curp == false)
+    {
+      var res = new
       {
-        flag = true;
-        for (int i = 1; i < Pa.Length; i++)
-        {
-          if (IsVocal(Pa[i]) && vocal == false)
-          {
-            vocal = true;
-            voc = Pa[i].ToString().ToUpper();
-          }
-        }
-        if (CURP[1].ToString() == voc)
-        {
-          if (CURP[2] == Sa[0])
-          {
-            if (CURP[3] == Pn[0])
-            {
-              for (int i = 0; i < fecha.Length; i++)
-              {
-                if (!(CURP[i + 4] == fecha[i]))
-                {
-                  flag = false;
-                }
-              }
-            }
-            else
-            {
-              flag = false;
-            }
-          }
-          else
-          {
-            flag = false;
-          }
-        }
-        else
-        {
-          flag = false;
-        }
-      }
-      if (flag == true)
-      {
-        return Ok("CURP Valida");
-      }
-      else
-      {
-        return BadRequest("CURP Invalida");
-      }
+        message = "La CURP no es valida"
+      };
+      return BadRequest(res);
+    }
+
+    var personaCreated = new PersonaCreate().Create(persona);
+
+    if (personaCreated == null)
+    {
+      return StatusCode(500);
+    }
+
+    return CreatedAtRoute("GetPersona", new { id = personaCreated.Id }, personaCreated);
   }
 
-  public bool IsVocal(char vocal)
-    {
-      char[] vocales = { 'A', 'a', 'I', 'i', 'U', 'u', 'E', 'e', 'O', 'o' };
-      return vocales.Contains(vocal);
-    }
+  // [AcceptVerbs("POST", "PUT")]
 }
