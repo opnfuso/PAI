@@ -33,8 +33,8 @@ public class EmpleadoController : ControllerBase
     return Ok(empleado);
   }
 
-  [HttpGet("{id}/prestamos", Name = "GetAllPrestamos")]
-  public IActionResult GetAllPrestamos(int id)
+  [HttpGet("{id}/prestamos", Name = "GetAllEmpleadoPrestamos")]
+  public IActionResult GetAllEmpleadoPrestamos(int id)
   {
     var empleados = new EmpleadoFunctions().UltimosPrestamos(id);
 
@@ -46,8 +46,8 @@ public class EmpleadoController : ControllerBase
     return Ok(empleados);
   }
 
-  [HttpGet("{id}/prestamo", Name = "GetPrestamo")]
-  public IActionResult GetPrestamo(int id)
+  [HttpGet("{id}/prestamo", Name = "GetEmpleadoPrestamo")]
+  public IActionResult GetEmpleadoPrestamo(int id)
   {
     var empleado = new EmpleadoFunctions().UltimoPrestamo(id);
 

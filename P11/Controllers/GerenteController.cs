@@ -31,4 +31,50 @@ public class GerenteController : ControllerBase
     }
     return Ok(gerente);
   }
+
+  [HttpPost(Name = "CreateGerente")]
+  public IActionResult Create([FromBody] GerenteCreate gerente)
+  {
+    if (gerente == null)
+    {
+      return BadRequest();
+    }
+
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+    var gerenteCreated = new GerenteCreate().Create(gerente);
+
+    if (gerenteCreated == null)
+    {
+      return StatusCode(500);
+    }
+
+    return CreatedAtRoute("GetGerente", new { id = gerenteCreated.Id }, gerenteCreated);
+  }
+
+  [HttpPut("{id}", Name = "UpdateGerente")]
+  public IActionResult Update(int id, [FromBody] GerenteUpdate gerente)
+  {
+    if (gerente == null)
+    {
+      return BadRequest();
+    }
+
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+    var gerenteUpdated = new GerenteUpdate().Update(id, gerente);
+
+    if (gerenteUpdated == null)
+    {
+      return StatusCode(500);
+    }
+
+    return Ok(gerenteUpdated);
+  }
 }

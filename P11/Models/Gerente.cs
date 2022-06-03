@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace P11
 {
@@ -21,7 +22,7 @@ namespace P11
     public DateTime FechaNacimiento { get; set; }
     public DateTime FechaIncorporacion { get; set; }
     public DateTime UltimasVacaciones { get; set; }
-    public string Password { get; set; } = null!;
+    // public string Password { get; set; } = null!;
     public int? DiasVaca { get; set; }
     public int? DiasSeguidos { get; set; }
     public decimal Saldo { get; set; }
@@ -52,26 +53,26 @@ namespace P11
         return gerente;
       }
     }
-    public object login(int user, string pass)
+    // public object login(int user, string pass)
+    // {
+    //   using (var db = new bancoContext())
+    //   {
+    //     var gerente = db.Gerentes.Where(u => u.Id == user && u.Password == pass).FirstOrDefault();
+
+    //     if (gerente == null)
+    //     {
+    //       return new Exception("Usuario o contraseña inválidos");
+    //     }
+
+    //     return gerente;
+    //   }
+    // }
+
+    public object Create(string Pa, string Sa, string Pn, string Sn, DateTime nacimiento)
     {
       using (var db = new bancoContext())
       {
-        var gerente = db.Gerentes.Where(u => u.Id == user && u.Password == pass).FirstOrDefault();
-
-        if (gerente == null)
-        {
-          return new Exception("Usuario o contraseña inválidos");
-        }
-
-        return gerente;
-      }
-    }
-
-    public object Create(string Pa, string Sa, string Pn, string Sn, string pass, DateTime nacimiento)
-    {
-      using (var db = new bancoContext())
-      {
-        if (Pn == null || Pa == null || Sa == null || pass == null)
+        if (Pn == null || Pa == null || Sa == null)
         {
           return new Exception("Algun dato es nulo");
         }
@@ -129,7 +130,7 @@ namespace P11
         gerente.SegundoNombre = Sn;
         gerente.PrimerApellido = Pa;
         gerente.SegundoApellido = Sa;
-        gerente.Password = pass;
+        // gerente.Password = pass;
         gerente.FechaIncorporacion = DateTime.Now;
         gerente.FechaNacimiento = nacimiento;
 
@@ -145,253 +146,95 @@ namespace P11
         return gerente;
       }
     }
+  }
 
-    public object AceptarPrestamo(int id, int sid, long uid)
+  public class GerenteCreate
+  {
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerNombre { get; set; }
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoNombre { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerApellido { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoApellido { get; set; }
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime FechaNacimiento { get; set; }
+
+    public Gerente Create(GerenteCreate empleadoCreate)
     {
+      var Pn = empleadoCreate.PrimerNombre;
+      var Sn = empleadoCreate.SegundoNombre;
+      var Pa = empleadoCreate.PrimerApellido;
+      var Sa = empleadoCreate.SegundoApellido;
+      var nacimiento = empleadoCreate.FechaNacimiento;
       using (var db = new bancoContext())
       {
-        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
-        var prestamos = db.Prestamos.Where(p => p.UsuarioId == uid).ToList();
-        var solicitud = db.SolicitudPrestamos.Where(p => p.Id == sid).FirstOrDefault();
-        int aid = 0;
+        var gerente = new Gerente();
 
-        if (prestamo == null || solicitud == null || prestamos.Count >= 3)
-        {
-          return new Exception("No se encontró el prestamo o la solicitud");
-        }
+        gerente.PrimerNombre = Pn;
+        gerente.SegundoNombre = Sn;
+        gerente.PrimerApellido = Pa;
+        gerente.SegundoApellido = Sa;
+        // gerente.Activo = true;
+        gerente.FechaNacimiento = nacimiento;
+        gerente.FechaIncorporacion = DateTime.Now;
+        // empleado.Password = pass;
 
-        foreach (var item in prestamos)
-        {
-          if (item.Activo == true)
-          {
-            aid = item.Id;
-          }
-        }
-
-        var ultimoPago = db.Pagos.Where(p => p.PrestamoId == aid).OrderByDescending(p => p.Fecha).FirstOrDefault();
-        var prestamoActivo = db.Prestamos.Where(p => p.Id == aid).FirstOrDefault();
-
-        if (ultimoPago == null || prestamoActivo == null)
-        {
-          return new Exception("No se encontró el ultimo pago o el prestamo");
-        }
-
-        if (ultimoPago.Fecha.AddMonths(1) < prestamoActivo.FechaLiquidacion)
-        {
-          return new Exception("No estas en el ultimo pago");
-        }
-
-        if (prestamo.FechaSolicitud.AddDays(2) > DateTime.Now)
-        {
-          return new Exception("No se puede aceptar el prestamo antes de 2 días");
-        }
-
-        solicitud.Estatus = 2;
-        prestamo.FechaAprobacion = DateTime.Now;
-        prestamo.FechaLiquidacion = DateTime.Now.AddMonths(prestamo.Meses);
-        prestamo.Activo = true;
-
-        for (int i = 0; i < prestamo.Meses; i++)
-        {
-          var pago = new Pago
-          {
-            PrestamoId = prestamo.Id,
-            UsuarioId = prestamo.UsuarioId,
-            Cantidad = prestamo.PagoMes / prestamo.Meses,
-            Fecha = DateTime.Now.AddMonths(i + 1)
-          };
-
-          db.Pagos.Add(pago);
-        }
-
+        db.Gerentes.Add(gerente);
         db.SaveChanges();
-        return prestamo;
+
+        // var cuenta = new Cuenta();
+        // cuenta.NCuentaEmpleado = empleado.Id;
+        // cuenta.Tipo = 2;
+        // db.Cuentas.Add(cuenta);
+        // db.SaveChanges();
+
+        return gerente;
       }
     }
+  }
 
-    public object DenegarPrestamo(int sid)
+  public class GerenteUpdate
+  {
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerNombre { get; set; }
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoNombre { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? PrimerApellido { get; set; }
+    [Required]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
+    public string? SegundoApellido { get; set; }
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime FechaNacimiento { get; set; }
+
+    public Gerente Update(int id, GerenteUpdate gerenteCreate)
     {
+      var Pn = gerenteCreate.PrimerNombre;
+      var Sn = gerenteCreate.SegundoNombre;
+      var Pa = gerenteCreate.PrimerApellido;
+      var Sa = gerenteCreate.SegundoApellido;
+      var nacimiento = gerenteCreate.FechaNacimiento;
       using (var db = new bancoContext())
       {
-        var solicitud = db.SolicitudPrestamos.Where(p => p.Id == sid).FirstOrDefault();
+        var gerente = db.Gerentes.Find(id);
 
-        if (solicitud == null)
-        {
-          return new Exception("Solicitud no existente");
-        }
+        gerente.PrimerNombre = Pn;
+        gerente.SegundoNombre = Sn;
+        gerente.PrimerApellido = Pa;
+        gerente.SegundoApellido = Sa;
+        gerente.FechaNacimiento = nacimiento;
 
-        solicitud.Estatus = 3;
-        db.SaveChanges();
-        return solicitud;
-      }
-    }
-
-    public object CrearPrestamo(int gid, decimal cantidad, int meses)
-    {
-      using (var db = new bancoContext())
-      {
-        var gerente = db.Gerentes.Where(g => g.Id == gid).FirstOrDefault();
-        // var cuenta = db.Cuentas.Where(c => c.NCuentaGerente == gid).FirstOrDefault();
-        var prestamo = new Prestamo();
-
-        if (gerente == null)
-        {
-          return new Exception("Gerente o cuenta no existente");
-        }
-
-        if (cantidad <= 0)
-        {
-          return new Exception("La cantidad debe ser mayor a 0");
-        }
-
-        if (meses != 6 && meses != 12 && meses != 24 && meses != 36)
-        {
-          return new Exception("El numero de meses debe ser 6, 12, 24 o 36");
-        }
-
-        prestamo.Meses = meses;
-        prestamo.Cantidad = cantidad;
-        prestamo.GerenteId = gerente.Id;
-        prestamo.FechaSolicitud = DateTime.Now;
-        prestamo.FechaAprobacion = DateTime.Now; ;
-        prestamo.FechaLiquidacion = DateTime.Now.AddMonths(meses);
-        prestamo.Activo = true;
-        prestamo.Interes = 10.2m;
-        prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
-
-        for (int i = 0; i < prestamo.Meses; i++)
-        {
-          var pago = new Pago
-          {
-            PrestamoId = prestamo.Id,
-            UsuarioId = prestamo.UsuarioId,
-            Cantidad = prestamo.PagoMes / prestamo.Meses,
-            Fecha = DateTime.Now.AddMonths(i + 1)
-          };
-
-          db.Pagos.Add(pago);
-        }
-
-        db.Prestamos.Add(prestamo);
         db.SaveChanges();
 
-        return prestamo;
-      }
-    }
-
-    public object BajaEmpleado(int id)
-    {
-      using (var db = new bancoContext())
-      {
-        var empleado = db.Empleados.Where(e => e.Id == id).FirstOrDefault();
-
-        if (empleado == null)
-        {
-          return new Exception("Empleado no existente");
-        }
-
-        empleado.Activo = false;
-        db.SaveChanges();
-        return empleado;
-      }
-    }
-
-    public object BajaUsuario(int id)
-    {
-      using (var db = new bancoContext())
-      {
-        var usuario = db.Usuarios.Where(u => u.Id == id).FirstOrDefault();
-        var prestamos = db.Prestamos.Where(p => p.UsuarioId == id).ToList();
-
-        if (usuario == null || prestamos.Count > 0)
-        {
-          return new Exception("Usuario o prestamos no existentes");
-        }
-
-        foreach (var item in prestamos)
-        {
-          if (DateTime.Now < item.FechaAprobacion.Value.AddMonths(6))
-          {
-            return new Exception("No se puede dar de baja el usuario, el ultimo registro debe ser mayor a 6 meses");
-          }
-        }
-
-        usuario.Activo = false;
-        usuario.FechaBaja = DateTime.Now;
-        db.SaveChanges();
-        return usuario;
-      }
-    }
-
-    public object PausarPrestamo(int id)
-    {
-      using (var db = new bancoContext())
-      {
-        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
-
-        if (prestamo == null)
-        {
-          return new Exception("Prestamo no existente");
-        }
-
-        prestamo.Activo = false;
-        prestamo.FechaPausa = DateTime.Now;
-        db.SaveChanges();
-        return prestamo;
-      }
-    }
-
-    public object ReanudarPrestamo(int id)
-    {
-      using (var db = new bancoContext())
-      {
-        var prestamo = db.Prestamos.Where(p => p.Id == id).FirstOrDefault();
-        if (prestamo == null)
-        {
-          return new Exception("Prestamo no existente");
-        }
-
-        var pagos = db.Pagos.Where(p => p.PrestamoId == id && p.Fecha > prestamo.FechaPausa).ToList();
-
-        if (pagos.Count <= 0)
-        {
-          return new Exception("No se puede reaudar el prestamo, no hay pagos posteriores a la fecha de pausa");
-        }
-
-        foreach (var pago in pagos)
-        {
-          var diff = DateTime.Now.Subtract(pago.Fecha);
-          var presta = db.Prestamos.Where(p => p.Id == pago.PrestamoId).FirstOrDefault();
-
-          if (presta is null)
-          {
-            return new Exception("Prestamo no existente");
-          }
-
-          pago.Fecha = pago.Fecha.AddDays(diff.Days);
-
-          presta.FechaLiquidacion = presta.FechaLiquidacion.Value.AddDays(diff.Days);
-        }
-
-        prestamo.Activo = true;
-        prestamo.FechaPausa = null;
-        db.SaveChanges();
-        return prestamo;
-      }
-    }
-
-    public object AddSaldo(int id, decimal cantidad)
-    {
-      using (var db = new bancoContext())
-      {
-        var gerente = db.Gerentes.Where(c => c.Id == id).FirstOrDefault();
-        if (gerente == null)
-        {
-          return new Exception("Cuenta no existente");
-        }
-
-        gerente.Saldo += cantidad;
-        db.SaveChanges();
         return gerente;
       }
     }

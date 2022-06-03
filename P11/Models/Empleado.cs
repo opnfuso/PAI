@@ -130,15 +130,15 @@ namespace P11
   public class EmpleadoUpdate
   {
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string? PrimerNombre { get; set; }
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string? SegundoNombre { get; set; }
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string? PrimerApellido { get; set; }
     [Required]
-    [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Solo se permiten letras")]
+    [RegularExpression(@"^[a-zA-ZñÑ]+", ErrorMessage = "Solo se permiten letras")]
     public string? SegundoApellido { get; set; }
     [Required]
     [DataType(DataType.Date)]

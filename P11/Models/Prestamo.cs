@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace P11
 {
@@ -31,6 +32,28 @@ namespace P11
     public virtual Usuario Usuario { get; set; } = null!;
     public virtual ICollection<Pago> Pagos { get; set; }
     public virtual ICollection<SolicitudPrestamo> SolicitudPrestamos { get; set; }
+
+    public object GetAll()
+    {
+      using (var db = new bancoContext())
+      {
+        return db.Prestamos.ToList();
+      }
+    }
+
+    public object Get(int id)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = db.Prestamos.Find(id);
+        if (prestamo == null)
+        {
+          return null;
+        }
+
+        return prestamo;
+      }
+    }
 
     public object Create(long UsuarioId, decimal saldo, decimal monto, int meses)
     {
@@ -105,6 +128,78 @@ namespace P11
         return prestamo;
       }
     }
+  }
 
+  public class PrestamoCreate
+  {
+    [Required]
+    public long UsuarioId { get; set; }
+    [Required]
+    [Range(0, 1000000)]
+    public decimal monto { get; set; }
+    [Required]
+    [Range(6, 36)]
+    public int meses { get; set; }
+
+    public Prestamo Create(PrestamoCreate prestamoCreate)
+    {
+      var UsuarioId = prestamoCreate.UsuarioId;
+      var monto = prestamoCreate.monto;
+      var meses = prestamoCreate.meses;
+
+      using (var db = new bancoContext())
+      {
+        var prestamo = new Prestamo();
+
+        prestamo.UsuarioId = UsuarioId;
+        prestamo.Meses = meses;
+        prestamo.Cantidad = monto;
+        prestamo.FechaSolicitud = DateTime.Now;
+        prestamo.Activo = false;
+
+        switch (prestamo.Meses)
+        {
+          case 6:
+            {
+              prestamo.Interes = 12;
+              break;
+            }
+          case 12:
+            {
+              prestamo.Interes = 18;
+              break;
+            }
+          case 24:
+            {
+              prestamo.Interes = 27.9M;
+              break;
+            }
+          case 36:
+            {
+              prestamo.Interes = 42;
+              break;
+            }
+        }
+
+        prestamo.PagoMes = (prestamo.Cantidad / prestamo.Meses) + ((prestamo.Cantidad / prestamo.Meses) * prestamo.Interes / 100);
+        prestamo.FechaLiquidacion = prestamo.FechaSolicitud.AddMonths(prestamo.Meses);
+
+        db.Prestamos.Add(prestamo);
+        db.SaveChanges();
+
+        var SoliPrestamo = new SolicitudPrestamo()
+        {
+          UsuarioId = prestamo.UsuarioId,
+          PrestamoId = prestamo.Id,
+          Estatus = 1
+
+        };
+
+        db.SolicitudPrestamos.Add(SoliPrestamo);
+        db.SaveChanges();
+
+        return prestamo;
+      }
+    }
   }
 }
