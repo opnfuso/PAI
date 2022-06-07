@@ -32,6 +32,32 @@ public class GerenteController : ControllerBase
     return Ok(gerente);
   }
 
+  [HttpGet("prestamosToAccept", Name = "GetPrestamosToAccept")]
+  public IActionResult GetPrestamosToAccept()
+  {
+    var prestamos = new Gerente().GetPrestamosToAccept();
+
+    if (prestamos == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(prestamos);
+  }
+
+  [HttpGet("usuariosToAccept", Name = "GetUsuariosToAccept")]
+  public IActionResult GetUsuariosToAccept()
+  {
+    var usuarios = new Gerente().GetUsuariosToAccept();
+
+    if (usuarios == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(usuarios);
+  }
+
   [HttpPost(Name = "CreateGerente")]
   public IActionResult Create([FromBody] GerenteCreate gerente)
   {

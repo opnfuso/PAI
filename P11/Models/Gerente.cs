@@ -53,6 +53,37 @@ namespace P11
         return gerente;
       }
     }
+
+    public object GetPrestamosToAccept()
+    {
+      using (var db = new bancoContext())
+      {
+        var solicitudes = db.SolicitudPrestamos.Where(p => p.Estatus == 1 && p.Prestamo.Meses > 12).ToList();
+
+        if (solicitudes.Count == 0)
+        {
+          return null;
+        }
+
+        return solicitudes;
+      }
+    }
+
+    public object GetUsuariosToAccept()
+    {
+      using (var db = new bancoContext())
+      {
+        var solicitudes = db.Solicituds.Where(p => p.Estatus == 1).ToList();
+
+        if (solicitudes.Count == 0)
+        {
+          return null;
+        }
+
+        return solicitudes;
+      }
+    }
+
     // public object login(int user, string pass)
     // {
     //   using (var db = new bancoContext())
