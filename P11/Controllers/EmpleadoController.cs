@@ -21,6 +21,19 @@ public class EmpleadoController : ControllerBase
     return Ok(empleados);
   }
 
+  [HttpGet("prestamosToAccept", Name = "GetPrestamosToAcceptEmpleado")]
+  public IActionResult GetPrestamosToAcceptEmpleado()
+  {
+    var prestamos = new Empleado().GetPrestamosToAccept();
+
+    if (prestamos == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(prestamos);
+  }
+
   [HttpGet("{id}", Name = "GetEmpleado")]
   public IActionResult Get(int id)
   {

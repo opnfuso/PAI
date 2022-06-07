@@ -58,6 +58,19 @@ public class GerenteController : ControllerBase
     return Ok(usuarios);
   }
 
+  [HttpGet("report/date", Name = "GetReportPerMonth")]
+  public IActionResult GetReportPerMonth()
+  {
+    var report = new Gerente().GetReportDate();
+
+    if (report == null)
+    {
+      return NotFound();
+    }
+
+    return Ok(report);
+  }
+
   [HttpPost(Name = "CreateGerente")]
   public IActionResult Create([FromBody] GerenteCreate gerente)
   {

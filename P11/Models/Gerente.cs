@@ -84,6 +84,28 @@ namespace P11
       }
     }
 
+    public object GetReportDate()
+    {
+      using (var db = new bancoContext())
+      {
+        var reports = db.SolicitudPrestamos.Where(e => e.Estatus == 2).Select(a => new
+        {
+          pertenece = a.Usuario.NombreUsuario,
+          idprestamo = a.PrestamoId,
+          iduser = a.UsuarioId,
+          fsolicitud = a.Prestamo.FechaSolicitud,
+          faprobacion = a.Prestamo.FechaAprobacion,
+        }).ToList();
+
+        if (reports.Count == 0)
+        {
+          return null;
+        }
+
+        return reports;
+      }
+    }
+
     // public object login(int user, string pass)
     // {
     //   using (var db = new bancoContext())
