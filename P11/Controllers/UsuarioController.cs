@@ -42,7 +42,7 @@ public class UsuarioController : ControllerBase
   [HttpGet("{id}/prestamo", Name = "GetPrestamoActivo")]
   public IActionResult GetPrestamoActivo(long id)
   {
-    var prestamo = new Usuario().PrestamoActivo(id);
+    var prestamo = new Usuario().GetActivePrestamo(id);
 
     if (prestamo == null)
     {
@@ -59,7 +59,7 @@ public class UsuarioController : ControllerBase
   [HttpGet("{id}/historial", Name = "GetHistorial")]
   public IActionResult GetHistorial(long id)
   {
-    var prestamo = new Usuario().Historial(id);
+    var prestamo = new Usuario().GetPayHistory(id);
 
     if (prestamo == null)
     {

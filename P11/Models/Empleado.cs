@@ -76,6 +76,8 @@ namespace P11
       }
     }
 
+
+
     // public object login(int user, string pass)
     // {
     //   using (var db = new bancoContext())
@@ -181,6 +183,25 @@ namespace P11
         return empleado;
       }
     }
+  }
+
+  public class CalculatePrestamo
+  {
+    [Required]
+    public long UsuarioId { get; set; }
+    [Required]
+    [Range(0, 1000000)]
+    public decimal monto { get; set; }
+    [Required]
+    [Range(6, 36)]
+    public int meses { get; set; }
+
+    // public object Calculate(CalculatePrestamo calculate)
+    // {
+    //   var UsuarioId = calculate.UsuarioId;
+    //   var monto = calculate.monto;
+    //   var meses = calculate.meses;
+    // }
   }
 }
 

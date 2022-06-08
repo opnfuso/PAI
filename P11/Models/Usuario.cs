@@ -54,6 +54,36 @@ namespace P11
       }
     }
 
+    public object GetActivePrestamo(long id)
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamo = db.Prestamos.Where(p => p.UsuarioId == id && p.Activo == true).FirstOrDefault();
+
+        if (prestamo == null)
+        {
+          return null;
+        }
+
+        return prestamo;
+      }
+    }
+
+    public object GetPayHistory(long id)
+    {
+      using (var db = new bancoContext())
+      {
+        var pagos = db.Pagos.Where(p => p.UsuarioId == id).ToList();
+
+        if (pagos.Count == 0)
+        {
+          return null;
+        }
+
+        return pagos;
+      }
+    }
+
     public object login(long id, string pass)
     {
       using (var db = new bancoContext())
@@ -94,36 +124,6 @@ namespace P11
         usuario.Intentos = 0;
 
         return usuario;
-      }
-    }
-
-    public object PrestamoActivo(long id)
-    {
-      using (var db = new bancoContext())
-      {
-        var prestamo = db.Prestamos.Where(p => p.UsuarioId == id && p.Activo == true).FirstOrDefault();
-
-        if (prestamo == null)
-        {
-          return null;
-        }
-
-        return prestamo;
-      }
-    }
-
-    public object Historial(long id)
-    {
-      using (var db = new bancoContext())
-      {
-        var pagos = db.Pagos.Where(p => p.UsuarioId == id).ToList();
-
-        if (pagos.Count == 0)
-        {
-          return null;
-        }
-
-        return pagos;
       }
     }
 
