@@ -73,5 +73,23 @@ public class UsuarioController : ControllerBase
 
     return Ok(prestamo);
   }
+
+  [HttpGet("usersLastPrestamo", Name = "GetUsersLastPrestamo")]
+  public IActionResult GetUsersLastPrestamo()
+  {
+    var prestamos = new Usuario().GetListOfUsersWithLastPrestamo();
+
+    if (prestamos == null)
+    {
+      var res = new
+      {
+        message = "No hay usuarios con prestamos",
+      };
+
+      return NotFound(res);
+    }
+    return Ok(prestamos);
+  }
   #endregion
 }
+

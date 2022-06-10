@@ -84,6 +84,38 @@ namespace P11
       }
     }
 
+    public object GetListOfUsersWithLastPrestamo()
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamos = db.Prestamos.OrderByDescending(p => p.UsuarioId).ToList();
+
+        if (prestamos.Count == 0)
+        {
+          return null;
+        }
+
+        var dict = new Dictionary<long, int>();
+        var list = new List<object>();
+
+        foreach (var prestamo in prestamos)
+        {
+          if (!dict.ContainsKey(prestamo.UsuarioId))
+          {
+            dict.Add(prestamo.UsuarioId, 0);
+            var prestamo1 = db.Prestamos.Where(p => p.UsuarioId == prestamo.UsuarioId).OrderBy(p => p.Id).LastOrDefault();
+            var usuario = db.Usuarios.Find(prestamo.UsuarioId);
+
+            var res = new { Id = usuario.Id, NombreUsuario = usuario.NombreUsuario, Saldo = usuario.Saldo, Activo = usuario.Activo, UltimoPrestamo = prestamo1.Id };
+
+            list.Add(res);
+          }
+        }
+
+        return list;
+      }
+    }
+
     public object login(long id, string pass)
     {
       using (var db = new bancoContext())
