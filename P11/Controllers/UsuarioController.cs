@@ -19,10 +19,10 @@ public class UsuarioController : ControllerBase
   {
     var users = new Usuario().GetAll();
 
-    if (users == null)
-    {
-      return StatusCode(500);
-    }
+    // if (users == null)
+    // {
+    //   return StatusCode(500);
+    // }
 
     return Ok(users);
   }
@@ -74,7 +74,7 @@ public class UsuarioController : ControllerBase
     return Ok(prestamo);
   }
 
-  [HttpGet("usersLastPrestamo", Name = "GetUsersLastPrestamo")]
+  [HttpGet("lastPrestamo", Name = "GetUsersLastPrestamo")]
   public IActionResult GetUsersLastPrestamo()
   {
     var prestamos = new Usuario().GetListOfUsersWithLastPrestamo();
@@ -84,6 +84,23 @@ public class UsuarioController : ControllerBase
       var res = new
       {
         message = "No hay usuarios con prestamos",
+      };
+
+      return NotFound(res);
+    }
+    return Ok(prestamos);
+  }
+
+  [HttpGet("notEnoughMoney", Name = "GetUsersNotEnoughMoney")]
+  public IActionResult GetUsersNotEnoughMoney()
+  {
+    var prestamos = new Usuario().GetListOfUserWithNotEnoughMoney();
+
+    if (prestamos == null)
+    {
+      var res = new
+      {
+        message = "No hay usuarios con insuficiente dinero",
       };
 
       return NotFound(res);

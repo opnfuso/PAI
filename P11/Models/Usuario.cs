@@ -116,6 +116,35 @@ namespace P11
       }
     }
 
+    public object GetListOfUserWithNotEnoughMoney()
+    {
+      using (var db = new bancoContext())
+      {
+        var prestamos = db.Prestamos.Where(p => p.Activo == true).ToList();
+        var lista = new List<object>();
+        // Print all the Prestamos
+        foreach (var prestamo in prestamos)
+        {
+          var usuario = db.Usuarios.Find(prestamo.UsuarioId);
+
+          if (usuario.Saldo < prestamo.PagoMes)
+          {
+            var res = new
+            {
+              Id = usuario.Id,
+              NombreUsuario = usuario.NombreUsuario,
+              Saldo = usuario.Saldo,
+              PrestamoId = prestamo.Id,
+              PagoMes = prestamo.PagoMes,
+            };
+
+            lista.Add(res);
+          }
+        }
+
+        return lista;
+      }
+    }
     public object login(long id, string pass)
     {
       using (var db = new bancoContext())
